@@ -1,0 +1,4 @@
+# AI Governance Control Tower
+# Zero-dependency client-side vanilla web application.
+# Serves locally using Python's standard library (no pip packages required).
+# Usage: py -m http.server 8080
