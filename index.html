@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Enterprise AI Governance, Security Guardrails, and Autonomous Control Tower. HIPAA compliant, real-time prompt injection detection, PII masking, and explainability dashboard.">
+    <title>Enterprise AI Governance & Autonomous Control Tower</title>
+    <!-- Google Fonts: Plus Jakarta Sans for clean premium typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js for premium animated data visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 90C50 90 85 75 85 45V15L50 5L15 15V45C15 75 50 90 50 90Z" fill="none" stroke="var(--accent-indigo)" stroke-width="8" stroke-linejoin="round"/>
+                        <circle cx="50" cy="48" r="14" stroke="var(--accent-cyan)" stroke-width="6"/>
+                        <path d="M50 20V34 M50 62V76 M22 48H36 M64 48H78" stroke="var(--accent-indigo)" stroke-width="5" stroke-linecap="round"/>
+                    </svg>
+                    <div class="logo-text">
+                        <h1>AI Governance</h1>
+                        <span>Control Tower</span>
+                    </div>
+                </div>
+                <div class="compliance-badge">
+                    <span class="pulse-dot green"></span>
+                    <span>HIPAA COMPLIANT</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-tab="dashboard" id="btn-tab-dashboard">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="9" rx="1" />
+                        <rect x="14" y="3" width="7" height="5" rx="1" />
+                        <rect x="14" y="12" width="7" height="9" rx="1" />
+                        <rect x="3" y="16" width="7" height="5" rx="1" />
+                    </svg>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-btn" data-tab="security" id="btn-tab-security">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    <span>Safety & Security</span>
+                </button>
+                <button class="nav-btn" data-tab="policy" id="btn-tab-policy">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <line x1="10" y1="9" x2="8" y2="9"/>
+                    </svg>
+                    <span>Policy Engine</span>
+                </button>
+                <button class="nav-btn" data-tab="explainability" id="btn-tab-explainability">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
+                        <path d="M22 12A10 10 0 0 0 12 2v10z"/>
+                    </svg>
+                    <span>Explainability</span>
+                </button>
+                <button class="nav-btn" data-tab="compliance" id="btn-tab-compliance">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <span>Compliance Hub</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="system-status">
+                    <div class="status-row">
+                        <span class="status-label">Guardrails Status</span>
+                        <span class="status-value text-green">ACTIVE</span>
+                    </div>
+                    <div class="status-row">
+                        <span class="status-label">Security Load</span>
+                        <span class="status-value">Normal (12 ms)</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: 15%"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-title">
+                    <h2>AI Governance Control Tower</h2>
+                    <p class="text-secondary">Enterprise-grade autonomous policy & security enforcement</p>
+                </div>
+                <div class="header-actions">
+                    <div class="live-clock" id="live-clock">June 9, 2026 18:36:52 PM</div>
+                    <button class="btn btn-primary" id="btn-simulate-traffic">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                            <polygon points="5 3 19 12 5 21 5 3"/>
+                        </svg>
+                        <span>Simulate Stream</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- TABS -->
+
+            <!-- Tab: Dashboard -->
+            <section class="tab-panel active" id="tab-dashboard">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Overall Risk Score</span>
+                            <div class="metric-icon bg-red-opacity text-red">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                            </div>
+                        </div>
+                        <div class="metric-value-container">
+                            <span class="metric-value text-amber" id="metric-risk-score">18%</span>
+                            <span class="metric-trend text-green">↓ 4.2%</span>
+                        </div>
+                        <div class="metric-footer">
+                            <span>Status: Low Risk Profile</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Injections Blocked</span>
+                            <div class="metric-icon bg-orange-opacity text-orange">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/></svg>
+                            </div>
+                        </div>
+                        <div class="metric-value-container">
+                            <span class="metric-value text-red" id="metric-blocked">42</span>
+                            <span class="metric-badge-pulse" id="pulse-blocked">+1</span>
+                        </div>
+                        <div class="metric-footer">
+                            <span>2 attempts detected today</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Sensitive Redactions</span>
+                            <div class="metric-icon bg-blue-opacity text-blue">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/></svg>
+                            </div>
+                        </div>
+                        <div class="metric-value-container">
+                            <span class="metric-value text-cyan" id="metric-redacted">1,284</span>
+                            <span class="metric-badge-pulse" id="pulse-redacted">+4</span>
+                        </div>
+                        <div class="metric-footer">
+                            <span>HIPAA Safeguards active</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Policy Compliance</span>
+                            <div class="metric-icon bg-green-opacity text-green">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/></svg>
+                            </div>
+                        </div>
+                        <div class="metric-value-container">
+                            <span class="metric-value text-green" id="metric-compliance">99.8%</span>
+                            <span class="metric-trend text-green">↑ 0.1%</span>
+                        </div>
+                        <div class="metric-footer">
+                            <span>12 active enterprise policies</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Stream Logger -->
+                    <div class="grid-card col-8">
+                        <div class="card-header">
+                            <div class="header-left">
+                                <h3 class="card-title">Real-Time Autonomous Guardrail Stream</h3>
+                                <p class="card-subtitle">Live auditing logs of LLM inputs, safety checks, and hashing</p>
+                            </div>
+                            <div class="header-right">
+                                <span class="badge badge-pulse-green">LIVE STREAMING</span>
+                            </div>
+                        </div>
+                        <div class="stream-container" id="stream-container">
+                            <!-- Stream items injected by app.js -->
+                        </div>
+                    </div>
+
+                    <!-- Side Stats & Alerts -->
+                    <div class="grid-card col-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Recent Policy Alerts</h3>
+                            <p class="card-subtitle">Violations requiring automated actions</p>
+                        </div>
+                        <div class="alert-list" id="recent-alerts">
+                            <!-- Alerts injected by app.js -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Safety & Security -->
+            <section class="tab-panel" id="tab-security">
+                <div class="section-desc">
+                    <h2>AI Safety, Security & Redaction</h2>
+                    <p class="text-secondary">Simulate real-time protection against malicious prompt injections, validate outputs, and mask patient Protected Health Information (PHI) in compliance with HIPAA Safe Harbor guidelines.</p>
+                </div>
+
+                <div class="playground-layout">
+                    <!-- Left Side: Interactive Input -->
+                    <div class="playground-card">
+                        <div class="card-header">
+                            <h3 class="card-title">LLM Guardrail Sandbox</h3>
+                            <div class="presets-row">
+                                <span class="text-secondary text-sm">Presets:</span>
+                                <button class="btn btn-sm btn-outline" onclick="loadSecurityPreset('clean')">Clean Query</button>
+                                <button class="btn btn-sm btn-outline" onclick="loadSecurityPreset('injection')">Jailbreak Attempt</button>
+                                <button class="btn btn-sm btn-outline" onclick="loadSecurityPreset('pii')">HIPAA PHI Data</button>
+                                <button class="btn btn-sm btn-outline" onclick="loadSecurityPreset('sql')">SQL Leakage</button>
+                            </div>
+                        </div>
+
+                        <div class="input-section">
+                            <label for="security-input-prompt" class="form-label">Incoming User Prompt</label>
+                            <textarea class="form-textarea" id="security-input-prompt" placeholder="Type or select a preset prompt to test safety guardrails..."></textarea>
+                        </div>
+
+                        <div class="input-section mt-4">
+                            <label for="security-input-output" class="form-label">Simulated LLM Response (for output validation)</label>
+                            <textarea class="form-textarea" id="security-input-output" placeholder="Optional simulated output from model..."></textarea>
+                        </div>
+
+                        <div class="actions-row mt-4">
+                            <button class="btn btn-primary" id="btn-run-security-check">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                </svg>
+                                <span>Execute Safety Shield</span>
+                            </button>
+                            <button class="btn btn-outline" id="btn-clear-security">Clear All</button>
+                        </div>
+                    </div>
+
+                    <!-- Right Side: Guardrail Diagnostics -->
+                    <div class="playground-card diagnostics-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Shield Evaluation Diagnostics</h3>
+                            <span class="badge" id="shield-verdict-badge">IDLE</span>
+                        </div>
+
+                        <div class="diag-group">
+                            <div class="diag-header">
+                                <span>Prompt Injection Risk Score</span>
+                                <span class="diag-val" id="diag-injection-score">0%</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill bg-green" id="diag-injection-bar" style="width: 0%"></div>
+                            </div>
+                            <div class="diag-details text-secondary text-sm" id="diag-injection-reason">No threats detected. Ready.</div>
+                        </div>
+
+                        <hr class="card-divider" />
+
+                        <div class="diag-group">
+                            <div class="diag-header">
+                                <span>Sensitive Data Masking (PII/PHI Redacted Output)</span>
+                                <span class="badge badge-pill bg-blue-opacity text-blue" id="diag-pii-count">0 items masked</span>
+                            </div>
+                            <div class="masked-output-box" id="diag-pii-redacted-box">
+                                <span class="placeholder-text">Execute the Safety Shield to see redacted prompt here...</span>
+                            </div>
+                        </div>
+
+                        <hr class="card-divider" />
+
+                        <div class="diag-group">
+                            <div class="diag-header">
+                                <span>Output Schema & Safety Validation</span>
+                                <span class="diag-val text-green" id="diag-validation-status">Passed</span>
+                            </div>
+                            <div class="diag-details text-secondary text-sm" id="diag-validation-reason">Model output conforms to safety and regulatory standards.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Policy Engine -->
+            <section class="tab-panel" id="tab-policy">
+                <div class="section-desc">
+                    <h2>Governance Policy Engine</h2>
+                    <p class="text-secondary">Define, toggle, and hot-reload model alignment constraints. The AI Governance Control Tower evaluates prompt requests and model responses dynamically against custom policies before they reach end users.</p>
+                </div>
+
+                <div class="policy-layout">
+                    <!-- Left: Active Policy List -->
+                    <div class="policy-card col-left">
+                        <div class="card-header">
+                            <h3 class="card-title">Active Governance Policies</h3>
+                            <span class="text-secondary text-sm" id="active-policy-count">4 Policies</span>
+                        </div>
+                        <div class="policies-list" id="policies-list-container">
+                            <!-- Injected by app.js -->
+                        </div>
+                    </div>
+
+                    <!-- Right: Policy Sandbox & Custom Rules -->
+                    <div class="policy-card col-right">
+                        <div class="card-header">
+                            <h3 class="card-title">Create Custom Policy Rule</h3>
+                        </div>
+                        <div class="policy-builder-form">
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <label for="rule-id" class="form-label">Rule ID</label>
+                                    <input type="text" class="form-input" id="rule-id" placeholder="e.g. POLICY-05" />
+                                </div>
+                                <div class="form-col">
+                                    <label for="rule-name" class="form-label">Rule Name</label>
+                                    <input type="text" class="form-input" id="rule-name" placeholder="e.g. Financial Advice Lockout" />
+                                </div>
+                            </div>
+
+                            <div class="form-row mt-3">
+                                <div class="form-col">
+                                    <label for="rule-severity" class="form-label">Severity Level</label>
+                                    <select class="form-select" id="rule-severity">
+                                        <option value="High">High (Block Transaction)</option>
+                                        <option value="Medium">Medium (Mask / Log Warning)</option>
+                                        <option value="Info">Info (Audit Log Only)</option>
+                                    </select>
+                                </div>
+                                <div class="form-col">
+                                    <label for="rule-regex" class="form-label">Matching Pattern (Regex / Keyword)</label>
+                                    <input type="text" class="form-input" id="rule-regex" placeholder="e.g. (invest|stocks|bitcoin|financial)" />
+                                </div>
+                            </div>
+
+                            <div class="form-group mt-3">
+                                <label for="rule-desc" class="form-label">Rule Description / Compliance Context</label>
+                                <textarea class="form-textarea sm" id="rule-desc" placeholder="Explain the regulatory reason or internal policy for this guardrail..."></textarea>
+                            </div>
+
+                            <button class="btn btn-primary mt-4 w-full" id="btn-add-policy">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                                <span>Save & Deploy Policy</span>
+                            </button>
+                        </div>
+
+                        <hr class="card-divider my-4" />
+
+                        <div class="sandbox-dry-run">
+                            <h3 class="card-title mb-2">Sandbox Dry-Run Evaluator</h3>
+                            <textarea class="form-textarea sm" id="policy-sandbox-text" placeholder="Type sample input here to test policy enforcement..."></textarea>
+                            <div class="sandbox-output mt-3" id="policy-sandbox-verdict">
+                                <span class="placeholder-text">Type above to trigger real-time policy evaluation.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Explainability -->
+            <section class="tab-panel" id="tab-explainability">
+                <div class="section-desc">
+                    <h2>AI Explainability & Model Interpretability</h2>
+                    <p class="text-secondary">Regulatory rules demand transparency (e.g., EU AI Act Article 13). Use the explainability dashboard to visualize token-level influence of LLM decisions and explore counterfactual predictions on critical models.</p>
+                </div>
+
+                <div class="explainability-layout">
+                    <!-- Tab Panel Inside Explainability -->
+                    <div class="explainer-controls">
+                        <button class="explainer-tab active" data-exp-tab="attribution" id="btn-exp-attribution">Prompt Token Importance (SHAP)</button>
+                        <button class="explainer-tab" data-exp-tab="counterfactual" id="btn-exp-counterfactual">Counterfactual Risk Modeler</button>
+                    </div>
+
+                    <!-- Explainability Module: Token Attribution (SHAP) -->
+                    <div class="explainer-content active" id="exp-tab-attribution">
+                        <div class="explain-grid">
+                            <div class="explain-card col-left">
+                                <h3 class="card-title">Token-Level Importance Scoring</h3>
+                                <p class="card-subtitle">Visualizes which words in a patient referral prompt triggered a High Risk classification.</p>
+                                
+                                <div class="prompt-viz-box" id="token-attribution-container">
+                                    <!-- Populated by JS -->
+                                </div>
+
+                                <div class="importance-legend">
+                                    <div class="legend-item"><span class="legend-box bg-red"></span><span>Reduces Risk Score</span></div>
+                                    <div class="legend-item"><span class="legend-box bg-cyan"></span><span>Increases Risk Score</span></div>
+                                </div>
+                            </div>
+
+                            <div class="explain-card col-right">
+                                <h3 class="card-title">Attribution Chart</h3>
+                                <canvas id="shap-attribution-chart" height="280"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Explainability Module: Counterfactuals -->
+                    <div class="explainer-content" id="exp-tab-counterfactual">
+                        <div class="explain-grid">
+                            <div class="explain-card col-left">
+                                <h3 class="card-title">Patient Readmission Risk Predictor</h3>
+                                <p class="card-subtitle">Tweak clinical values to observe how the neural network changes prediction outcomes.</p>
+                                
+                                <div class="sliders-container">
+                                    <div class="slider-group">
+                                        <div class="slider-info">
+                                            <label for="cf-age" class="form-label">Patient Age</label>
+                                            <span class="slider-value" id="cf-age-val">68 yrs</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="cf-age" min="18" max="100" value="68" />
+                                    </div>
+
+                                    <div class="slider-group">
+                                        <div class="slider-info">
+                                            <label for="cf-vital" class="form-label">Systolic BP (Blood Pressure)</label>
+                                            <span class="slider-value" id="cf-vital-val">145 mmHg</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="cf-vital" min="90" max="200" value="145" />
+                                    </div>
+
+                                    <div class="slider-group">
+                                        <div class="slider-info">
+                                            <label for="cf-hba1c" class="form-label">HbA1c Level (%)</label>
+                                            <span class="slider-value" id="cf-hba1c-val">8.2 %</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="cf-hba1c" min="4.0" max="15.0" step="0.1" value="8.2" />
+                                    </div>
+
+                                    <div class="slider-group">
+                                        <div class="slider-info">
+                                            <label for="cf-admissions" class="form-label">Prior Admissions (Last 12m)</label>
+                                            <span class="slider-value" id="cf-admissions-val">3 times</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="cf-admissions" min="0" max="10" value="3" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="explain-card col-right centered-flex">
+                                <div class="gauge-container">
+                                    <div class="gauge-ring-outer"></div>
+                                    <div class="gauge-content">
+                                        <span class="gauge-value text-amber" id="cf-gauge-percent">65%</span>
+                                        <span class="gauge-label">Readmission Probability</span>
+                                    </div>
+                                </div>
+                                <div class="cf-explanation-card mt-4">
+                                    <h4>Dynamic Counterfactual Explanation</h4>
+                                    <p id="cf-text-explanation" class="text-secondary text-sm">
+                                        The high risk is primarily driven by <strong>Prior Admissions (3)</strong> and elevated <strong>Systolic BP (145)</strong>. Reducing Blood Pressure below 130 mmHg and keeping HbA1c under 7% would decrease readmission probability to <strong>38%</strong> (Low Risk).
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Compliance Hub -->
+            <section class="tab-panel" id="tab-compliance">
+                <div class="section-desc">
+                    <h2>Regulatory & HIPAA Compliance Center</h2>
+                    <p class="text-secondary">Manage technical audits for regulatory audits. HIPAA Security Rule compliance requires cryptographically secure, tamper-evident audit logging and strict PHI access tracking.</p>
+                </div>
+
+                <div class="compliance-layout">
+                    <!-- Top: HIPAA Checklist -->
+                    <div class="compliance-card w-full">
+                        <div class="card-header">
+                            <h3 class="card-title">HIPAA Safeguards & Security Compliance Audit</h3>
+                        </div>
+                        <div class="checklist-grid">
+                            <div class="checklist-item">
+                                <div class="item-header">
+                                    <input type="checkbox" checked disabled class="check-box" />
+                                    <span>§164.312(a)(1) Access Control</span>
+                                </div>
+                                <p class="checklist-desc">Automatic masking of 18 HIPAA Safe Harbor identifiers prior to writing logs or model ingestion.</p>
+                            </div>
+
+                            <div class="checklist-item">
+                                <div class="item-header">
+                                    <input type="checkbox" checked disabled class="check-box" />
+                                    <span>§164.312(b) Audit Controls</span>
+                                </div>
+                                <p class="checklist-desc">Cryptographically hashed system logs ensuring complete tamper evidence and permanent traceability.</p>
+                            </div>
+
+                            <div class="checklist-item">
+                                <div class="item-header">
+                                    <input type="checkbox" checked disabled class="check-box" />
+                                    <span>§164.312(c)(1) Integrity</span>
+                                </div>
+                                <p class="checklist-desc">Secure hashing links transactions together, preventing unauthorized retrospective altering of log records.</p>
+                            </div>
+
+                            <div class="checklist-item">
+                                <div class="item-header">
+                                    <input type="checkbox" checked disabled class="check-box" />
+                                    <span>§164.312(e)(1) Transmission Security</span>
+                                </div>
+                                <p class="checklist-desc">HTTPS transport encryption and zero retention policies for raw sensitive telemetry fields.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom: Cryptographic Logs & Export -->
+                    <div class="dashboard-grid mt-4">
+                        <div class="grid-card col-8">
+                            <div class="card-header">
+                                <div class="header-left">
+                                    <h3 class="card-title">Cryptographic Write-Once Audit Logs</h3>
+                                    <p class="card-subtitle">Tamper-evident chain of all transactions securely recorded in memory</p>
+                                </div>
+                                <div class="header-right">
+                                    <button class="btn btn-sm btn-outline text-green" id="btn-verify-chain">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                                            <polyline points="20 6 9 17 4 12"/>
+                                        </svg>
+                                        <span>Verify Chain Integrity</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="terminal-container">
+                                <pre id="audit-log-terminal">
+[SYSTEM START] June 9, 2026 18:34:41 PM - Initializing AI Governance Control Tower Chain.
+[GENESIS HASH] Hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+[INTEGRITY VERIFIER] Cryptographic integrity verification ready...
+                                </pre>
+                            </div>
+                        </div>
+
+                        <div class="grid-card col-4 flex-between">
+                            <div class="card-header">
+                                <h3 class="card-title">Compliance Reports</h3>
+                                <p class="card-subtitle">Export compliance logs for HIPAA, EU AI Act, and SOC 2 audits.</p>
+                            </div>
+                            
+                            <div class="report-box">
+                                <div class="report-row">
+                                    <span>HIPAA Safe Harbor Summary</span>
+                                    <span class="text-green text-sm">Valid</span>
+                                </div>
+                                <div class="report-row">
+                                    <span>EU AI Act Audit File</span>
+                                    <span class="text-green text-sm">Ready</span>
+                                </div>
+                                <div class="report-row font-bold">
+                                    <span>Tamper Check Status</span>
+                                    <span class="text-green text-sm" id="tamper-verify-status">UNVERIFIED</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary w-full mt-4" id="btn-download-report">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                <span>Export Audit Report</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Alert Modal (Dynamic Popup) -->
+    <div class="modal-backdrop" id="modal-container">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title text-red" id="modal-title">ALERT: Threat Blocked</h3>
+                <button class="btn-close" id="btn-close-modal">✕</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                Detailed threat logs go here.
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="btn-modal-close-action">Acknowledge</button>
+                <button class="btn btn-red" id="btn-modal-remediate">Remediate Incident</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
