@@ -1,4 +1,4 @@
-// Enterprise AI Governance & Autonomous Control Tower - Core
+// TCS ACT - Agent Control Tower - Core
 // Date: June 9, 2026
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -18,7 +18,7 @@ const state = {
     auditLogs: [
         {
             timestamp: "2026-06-09 18:34:41",
-            event: "System Start: Initializing AI Governance Control Tower Chain.",
+            event: "System Start: Initializing TCS ACT - Agent Control Tower Chain.",
             hash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             prevHash: "0000000000000000000000000000000000000000000000000000000000000000"
         }
@@ -1159,7 +1159,7 @@ async function runAuditChainVerification() {
 
 function downloadComplianceReportFile() {
     let content = `=========================================================\n`;
-    content += `AI GOVERNANCE CONTROL TOWER COMPLIANCE REPORT\n`;
+    content += `TCS ACT - AGENT CONTROL TOWER COMPLIANCE REPORT\n`;
     content += `Generated on: ${new Date().toLocaleString()}\n`;
     
     const fw = state.activeFramework;

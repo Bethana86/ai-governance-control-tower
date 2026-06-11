@@ -1,5 +1,5 @@
 # Executive Business Case & Product Requirement Document (PRD)
-## Project: Gemini Enterprise Agent Control Tower
+## Project: TCS ACT - Agent Control Tower
 
 ---
 
@@ -12,7 +12,7 @@ As enterprises scale autonomous Gemini agent workflows (such as customer support
 3. **Agent Tool Abuse**: Tool-enabled agents executing unauthorized system actions (e.g. running command execution parameters).
 4. **Hallucinations & Grounding Drift**: Generating false claims that lead to clinical errors or brand liability.
 
-### The Solution: Gemini Enterprise Agent Control Tower
+### The Solution: TCS ACT - Agent Control Tower
 A centralized, zero-latency **autonomous middleware gateway and monitoring console** that intercepts, filters, and logs all inputs and outputs of Gemini agent workflows. The platform ensures:
 * **Compliance**: Automatic HIPAA-standard PHI masking and cryptographically verified logging.
 * **Security**: Active tool parameter locking and prompt injection filters.
