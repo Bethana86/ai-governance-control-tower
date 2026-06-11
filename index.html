@@ -20,13 +20,19 @@
             <div class="sidebar-header">
                 <div class="logo-container">
                     <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M50 90C50 90 85 75 85 45V15L50 5L15 15V45C15 75 50 90 50 90Z" fill="none" stroke="var(--accent-indigo)" stroke-width="8" stroke-linejoin="round"/>
-                        <circle cx="50" cy="48" r="14" stroke="var(--accent-cyan)" stroke-width="6"/>
-                        <path d="M50 20V34 M50 62V76 M22 48H36 M64 48H78" stroke="var(--accent-indigo)" stroke-width="5" stroke-linecap="round"/>
+                        <path d="M50 12 C50 34 34 50 12 50 C34 50 50 66 50 88 C50 66 66 50 88 50 C66 50 50 34 50 12 Z" fill="url(#gemini-gradient)"/>
+                        <defs>
+                            <linearGradient id="gemini-gradient" x1="12" y1="12" x2="88" y2="88" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#1a73e8"/>
+                                <stop offset="30%" stop-color="#7c3aed"/>
+                                <stop offset="70%" stop-color="#ea4335"/>
+                                <stop offset="100%" stop-color="#fbbc05"/>
+                            </linearGradient>
+                        </defs>
                     </svg>
                     <div class="logo-text">
-                        <h1>AI Governance</h1>
-                        <span>Control Tower</span>
+                        <h1>Gemini AI</h1>
+                        <span>Agent Control Tower</span>
                     </div>
                 </div>
                 <div class="compliance-badge">
@@ -100,8 +106,8 @@
             <!-- Header -->
             <header class="main-header">
                 <div class="header-title">
-                    <h2>AI Governance Control Tower</h2>
-                    <p class="text-secondary">Enterprise-grade autonomous policy & security enforcement</p>
+                    <h2>Gemini Agent Control Tower</h2>
+                    <p class="text-secondary">Enterprise-grade autonomous safety, grounding, and policy enforcement</p>
                 </div>
                 <div class="header-actions">
                     <div class="live-clock" id="live-clock">June 9, 2026 18:36:52 PM</div>
@@ -225,13 +231,13 @@
                     <!-- Left Side: Interactive Input -->
                     <div class="playground-card">
                         <div class="card-header">
-                            <h3 class="card-title">LLM Guardrail Sandbox</h3>
+                            <h3 class="card-title">Gemini Agent Sandbox</h3>
                             <div class="presets-row">
                                 <span class="text-secondary text-sm">Presets:</span>
-                                <button class="btn btn-sm btn-outline" onclick="loadSecurityPreset('clean')">Clean Query</button>
-                                <button class="btn btn-sm btn-outline" onclick="loadSecurityPreset('injection')">Jailbreak Attempt</button>
+                                <button class="btn btn-sm btn-outline" onclick="loadSecurityPreset('clean')">Standard Query</button>
+                                <button class="btn btn-sm btn-outline" onclick="loadSecurityPreset('injection')">Jailbreak Bypass</button>
                                 <button class="btn btn-sm btn-outline" onclick="loadSecurityPreset('pii')">HIPAA PHI Data</button>
-                                <button class="btn btn-sm btn-outline" onclick="loadSecurityPreset('sql')">SQL Leakage</button>
+                                <button class="btn btn-sm btn-outline" onclick="loadSecurityPreset('tool_bypass')">Malicious Tool Call</button>
                             </div>
                         </div>
 
@@ -290,10 +296,10 @@
 
                         <div class="diag-group">
                             <div class="diag-header">
-                                <span>Output Schema & Safety Validation</span>
-                                <span class="diag-val text-green" id="diag-validation-status">Passed</span>
+                                <span>Google Search Grounding & Citation Check</span>
+                                <span class="diag-val text-green" id="diag-validation-status">Passed (98%)</span>
                             </div>
-                            <div class="diag-details text-secondary text-sm" id="diag-validation-reason">Model output conforms to safety and regulatory standards.</div>
+                            <div class="diag-details text-secondary text-sm" id="diag-validation-reason">Gemini response is fully grounded in citation references. No hallucinations detected.</div>
                         </div>
                     </div>
                 </div>
@@ -388,6 +394,7 @@
                     <div class="explainer-controls">
                         <button class="explainer-tab active" data-exp-tab="attribution" id="btn-exp-attribution">Prompt Token Importance (SHAP)</button>
                         <button class="explainer-tab" data-exp-tab="counterfactual" id="btn-exp-counterfactual">Counterfactual Risk Modeler</button>
+                        <button class="explainer-tab" data-exp-tab="safety" id="btn-exp-safety">Gemini Harm Settings</button>
                     </div>
 
                     <!-- Explainability Module: Token Attribution (SHAP) -->
@@ -468,6 +475,66 @@
                                     <h4>Dynamic Counterfactual Explanation</h4>
                                     <p id="cf-text-explanation" class="text-secondary text-sm">
                                         The high risk is primarily driven by <strong>Prior Admissions (3)</strong> and elevated <strong>Systolic BP (145)</strong>. Reducing Blood Pressure below 130 mmHg and keeping HbA1c under 7% would decrease readmission probability to <strong>38%</strong> (Low Risk).
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Explainability Module: Gemini Safety Threshold Settings -->
+                    <div class="explainer-content" id="exp-tab-safety">
+                        <div class="explain-grid">
+                            <div class="explain-card col-left">
+                                <h3 class="card-title">Gemini API Safety Configurator</h3>
+                                <p class="card-subtitle">Adjust Google's safety thresholds to control model content generation restrictions.</p>
+                                
+                                <div class="sliders-container">
+                                    <div class="slider-group">
+                                        <div class="slider-info">
+                                            <label class="form-label">Harassment Block Threshold</label>
+                                            <span class="slider-value" id="val-safety-harass">Block Some</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="slider-safety-harass" min="0" max="3" value="2" />
+                                    </div>
+
+                                    <div class="slider-group">
+                                        <div class="slider-info">
+                                            <label class="form-label">Hate Speech Block Threshold</label>
+                                            <span class="slider-value" id="val-safety-hate">Block Some</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="slider-safety-hate" min="0" max="3" value="2" />
+                                    </div>
+
+                                    <div class="slider-group">
+                                        <div class="slider-info">
+                                            <label class="form-label">Sexually Explicit Block Threshold</label>
+                                            <span class="slider-value" id="val-safety-sex">Block Some</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="slider-safety-sex" min="0" max="3" value="2" />
+                                    </div>
+
+                                    <div class="slider-group">
+                                        <div class="slider-info">
+                                            <label class="form-label">Dangerous Content Block Threshold</label>
+                                            <span class="slider-value" id="val-safety-danger">Block Some</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="slider-safety-danger" min="0" max="3" value="2" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="explain-card col-right centered-flex">
+                                <div class="gauge-container">
+                                    <div class="gauge-ring-outer" id="safety-ring-indicator"></div>
+                                    <div class="gauge-content">
+                                        <span class="gauge-value text-green" id="safety-policy-status">SECURE</span>
+                                        <span class="gauge-label">Active Guard Factor</span>
+                                    </div>
+                                </div>
+                                <div class="cf-explanation-card mt-4">
+                                    <h4>Google Safety Integration Status</h4>
+                                    <p id="safety-text-explanation" class="text-secondary text-sm">
+                                        With settings at <strong>Block Some</strong>, Gemini blocks queries containing minor safety drift, achieving a secure compliance profile for enterprise customer support roles.
                                     </p>
                                 </div>
                             </div>
