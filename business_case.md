@@ -25,9 +25,10 @@ A centralized, zero-latency **autonomous middleware gateway and monitoring conso
 ### The Cost of Inaction
 | Risk Area | Regulatory Framework | Financial Impact | Compliance Liability |
 | :--- | :--- | :--- | :--- |
-| **PHI Leakage** | HIPAA Security Rule | **$50,000 to $1.9M** per breach | Tier 4 willful neglect penalties, loss of healthcare contracts. |
-| **Hallucinatory Advice** | EU AI Act (High-Risk Classification) | **Up to 7% of global turnover** | Fines for non-compliance with transparency (Article 13) and risk management. |
-| **System Override / Key Leak** | SOC 2 / GDPR | **$4.4M average cost** of data breach | Loss of enterprise customer trust, service downtime, and database reconstruction. |
+| **PHI / PII Leakage** | HIPAA Security Rule / India DPDP Act (2023) | **$50,000 to $1.9M** per HIPAA breach; **Up to ₹250 Crore** for DPDP Act violations | Tier 4 willful neglect penalties, loss of healthcare contracts, class-action lawsuits, and immediate director liability. |
+| **Hallucinations & Bias** | EU AI Act (High-Risk Category) | **Up to €35M or 7% of global turnover** | Immediate bans on AI models, fines for failing to provide adequate model transparency (Art 13) or human oversight (Art 14). |
+| **Data Deletion Failures** | GDPR (Article 17 - Right to Erasure) | **Up to €20M or 4% of global turnover** | Penalties for retaining personal data after consent withdrawal or failure to delete PII from LLM training sets/logs. |
+| **System Override / Key Leak** | SOC 2 Type II / Security | **$4.4M average cost** of data breach | Loss of enterprise customer trust, service downtime, and database reconstruction. |
 
 ### Return on Investment (ROI)
 1. **Operational Cost Savings**: Automates 98% of manual audit logs. Rather than legal teams verifying historical chat histories, the Control Tower's cryptographic verification chain automates continuous audit reporting.
@@ -90,8 +91,9 @@ The Control Tower directly enforces **Google's AI Principles** and standard regu
 
 | Google AI Principle / Regulation | Control Tower Implementation Module | Verification Metric |
 | :--- | :--- | :--- |
-| **Be Built & Tested for Safety** | *Tool Parameter Lockout* | Blocks commands like `rm -rf` or parameter overrides. |
-| **Avoid Creating Bias** | *Attribution Explainer (SHAP)* | Highlights features contributing to model risk parameters. |
-| **Uphold High Standards of Privacy** | *HIPAA PHI Redaction* | Scans and redacts 18 Safe Harbor identifiers. |
-| **Be Accountable to People** | *Cryptographic Audit Ledger* | Tamper-evident transaction tracking with verify loop. |
-| **EU AI Act Art 13 (Transparency)** | *Grounding & Citation Check* | Measures citation match index against Google Search. |
+| **Be Built & Tested for Safety** | *Tool Parameter Lockout / SOC 2 CC6.1* | Blocks commands like `rm -rf`, unauthorized DB connections, or parameter overrides. |
+| **Avoid Creating Bias** | *Attribution Explainer (SHAP) / GDPR Art 22* | Highlights features contributing to model risk parameters to explain automated decisions. |
+| **Uphold High Standards of Privacy** | *PII Masking & Aadhaar Guard / DPDP Sec 8(5)* | Scans and redacts SSNs, emails, phone numbers, and Indian Aadhaar identifiers. |
+| **Be Accountable to People** | *Cryptographic Ledger / SOC 2 CC8.1* | Tamper-evident transaction tracking with verify loop. |
+| **EU GDPR Art 17 / DPDP Sec 8(10)** | *GDPR Right to Erasure Policy Rule* | Detects and logs erasure/data forget requests for systematic purging. |
+| **EU AI Act / Gemini Trust** | *Grounding & Citation / Safety Settings* | Measures citation match index against Google Search and sets API content thresholds. |

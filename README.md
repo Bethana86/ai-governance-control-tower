@@ -1,6 +1,6 @@
 # AI Governance Control Tower
 
-An enterprise-grade autonomous control tower for AI Governance, safety, explainability, and regulatory compliance. Tailored for regulatory-critical environments, including **HIPAA compliance** and **EU AI Act standards**, this single-page dashboard manages and audits LLM pipelines in real time.
+An enterprise-grade autonomous control tower for AI Governance, safety, explainability, and regulatory compliance. Tailored for regulatory-critical environments, this single-page dashboard manages and audits LLM pipelines in real time for **HIPAA**, **SOC 2 Type II**, **EU GDPR**, **India's DPDP Act (2023)**, and **Google Gemini Platform Trust standards**.
 
 ---
 
@@ -23,9 +23,9 @@ An enterprise-grade autonomous control tower for AI Governance, safety, explaina
 * **SHAP Token Attribution**: Color-coded visualization showing token-level risk contribution for tabular classification models.
 * **Counterfactual Explorer**: Sliders adjusting clinical parameters (Age, BP, HbA1c, prior admissions) showing real-time alterations in readmission risk alongside explanatory suggestions.
 
-### 5. Regulatory & HIPAA Compliance Hub
-* **Safeguards Checklist**: Audit checklist mapping technical guards directly to HIPAA Security Rule §164.312 specifications.
-* **tamper-Evident Ledger**: Write-once, append-only logs linked cryptographically using SHA-256 hashes generated through the native Web Crypto API.
+### 5. Regulatory & Platform Compliance Hub
+* **Multi-Framework Auditor**: Toggle checklists between global standards including **HIPAA (US)**, **SOC 2 Type II**, **GDPR (EU)**, **DPDP Act (India)**, and **Google Gemini Platform Trust standards**.
+* **Tamper-Evident Ledger**: Write-once, append-only logs linked cryptographically using SHA-256 hashes generated through the native Web Crypto API.
 * **Audit Chain Verification**: Self-audit loop calculating and verifying the integrity of the log chain to ensure zero retrospective tampering.
 
 ---

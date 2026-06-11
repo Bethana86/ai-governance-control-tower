@@ -546,48 +546,28 @@
             <!-- Tab: Compliance Hub -->
             <section class="tab-panel" id="tab-compliance">
                 <div class="section-desc">
-                    <h2>Regulatory & HIPAA Compliance Center</h2>
-                    <p class="text-secondary">Manage technical audits for regulatory audits. HIPAA Security Rule compliance requires cryptographically secure, tamper-evident audit logging and strict PHI access tracking.</p>
+                    <h2>Regulatory & Platform Compliance Center</h2>
+                    <p class="text-secondary">Manage technical audits for global regulatory standards. Satisfy compliance criteria for HIPAA Security Rules, SOC 2 Type II controls, EU GDPR, India's DPDP Act, and Google Gemini Platform security profiles using cryptographically secure, tamper-evident audit logging.</p>
                 </div>
 
                 <div class="compliance-layout">
-                    <!-- Top: HIPAA Checklist -->
+                    <!-- Framework Selector Controls -->
+                    <div class="compliance-controls">
+                        <button class="compliance-tab active" data-framework="hipaa">HIPAA Standards</button>
+                        <button class="compliance-tab" data-framework="soc2">SOC 2 Type II</button>
+                        <button class="compliance-tab" data-framework="gdpr">GDPR (EU)</button>
+                        <button class="compliance-tab" data-framework="dpdp">DPDP Act (India)</button>
+                        <button class="compliance-tab" data-framework="gemini">Gemini Trust</button>
+                    </div>
+
+                    <!-- Top: Dynamic Checklist Card -->
                     <div class="compliance-card w-full">
                         <div class="card-header">
-                            <h3 class="card-title">HIPAA Safeguards & Security Compliance Audit</h3>
+                            <h3 class="card-title" id="compliance-checklist-title">HIPAA Safeguards & Security Compliance Audit</h3>
+                            <p class="card-subtitle" id="compliance-checklist-subtitle">Administrative and technical safeguards satisfying patient data confidentiality.</p>
                         </div>
-                        <div class="checklist-grid">
-                            <div class="checklist-item">
-                                <div class="item-header">
-                                    <input type="checkbox" checked disabled class="check-box" />
-                                    <span>§164.312(a)(1) Access Control</span>
-                                </div>
-                                <p class="checklist-desc">Automatic masking of 18 HIPAA Safe Harbor identifiers prior to writing logs or model ingestion.</p>
-                            </div>
-
-                            <div class="checklist-item">
-                                <div class="item-header">
-                                    <input type="checkbox" checked disabled class="check-box" />
-                                    <span>§164.312(b) Audit Controls</span>
-                                </div>
-                                <p class="checklist-desc">Cryptographically hashed system logs ensuring complete tamper evidence and permanent traceability.</p>
-                            </div>
-
-                            <div class="checklist-item">
-                                <div class="item-header">
-                                    <input type="checkbox" checked disabled class="check-box" />
-                                    <span>§164.312(c)(1) Integrity</span>
-                                </div>
-                                <p class="checklist-desc">Secure hashing links transactions together, preventing unauthorized retrospective altering of log records.</p>
-                            </div>
-
-                            <div class="checklist-item">
-                                <div class="item-header">
-                                    <input type="checkbox" checked disabled class="check-box" />
-                                    <span>§164.312(e)(1) Transmission Security</span>
-                                </div>
-                                <p class="checklist-desc">HTTPS transport encryption and zero retention policies for raw sensitive telemetry fields.</p>
-                            </div>
+                        <div class="checklist-grid" id="compliance-checklist-container">
+                            <!-- Populated dynamically by app.js -->
                         </div>
                     </div>
 

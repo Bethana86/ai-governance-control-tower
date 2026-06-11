@@ -20,20 +20,29 @@ All codebase files are located in:
    - **Google Search Grounding Verifier**: Computes grounding validation metrics and displays citation check ratings (e.g. `Passed (98% Grounded)`) on LLM output streams.
    - **GCP Key Guard**: Automatically shields against the leakage of Google Cloud service account keys.
 
-3. **Gemini API Safety Configurator (Explainability)**:
-   - Added a new panel tab called **Gemini Harm Settings**.
-   - Integrates sliders representing Gemini API's official content block threshold categories: *Harassment*, *Hate Speech*, *Sexually Explicit*, and *Dangerous Content*.
-   - Adjusting thresholds dynamically shifts the **Active Guard Factor** dial (Secure, Warn, Risky) and updates simulated policy logs.
+3. **Multi-Framework Compliance Auditor**:
+   - Added an interactive selector row in the **Compliance Hub** tab allowing users to toggle checklists between **HIPAA**, **SOC 2 Type II**, **EU GDPR**, **India's DPDP Act (2023)**, and **Google Gemini Platform Trust standards**.
+   - Dynamically re-renders regulatory checklist cards mapping technical controls to the specific audit sections of each standard.
+   - Updated **Export Audit Report** to generate a complete compliance report conforming to the status of the currently selected framework, active policies, and cryptographic ledger.
+   - Integrated new default policy rules: **GDPR Right to Erasure** (Articles 15/17), **DPDP Aadhaar Guard** (Aadhaar redaction), and **SOC 2 Processing Integrity** boundary guards.
 
 ---
 
-## 🚀 How to Run the Application
+## 🚀 How to Run and Verify the Application
 
-The background server task has restarted in the background and is serving the updated assets.
+The background server is running and serving the updated assets.
 
 1. **Refresh your browser** and visit:
    [http://localhost:8080](http://localhost:8080)
-2. **Interact with the New Features**:
-   - **Dashboard**: Run **Simulate Stream** to see the logs showing `gemini-1.5-pro` and `gemini-1.5-flash` running with Google Search Grounding verification indexes.
-   - **Sandbox Playground**: Select the **Malicious Tool Call** preset and click **Execute Safety Shield** to see Gemini's tool validation block parameter execution in action.
-   - **Explainability**: Select the new **Gemini Harm Settings** tab. Move the sliders to toggle safety thresholds between *Block None* and *Block Most* to watch the guard dial calculate real-time safety scores.
+2. **Interact with the Compliance Hub**:
+   - Navigate to the **Compliance Hub** tab.
+   - Switch between the **SOC 2 Type II**, **GDPR (EU)**, and **DPDP Act (India)** standards using the selector buttons.
+   - Notice the checklist updates dynamically to present aligned controls and section numbers (e.g. Section 8(5) Aadhaar shielding under the DPDP Act).
+   - Click **Verify Chain Integrity** to test the tamper-evident SHA-256 blockchain ledger.
+   - Click **Export Audit Report** to download a formatted text file capturing the active standard checklist.
+3. **Test the New Heuristics**:
+   - Go to the **Safety & Security Playground** (or use the Policy dry-run box).
+   - Enter a prompt with an Aadhaar card (e.g. `1234-5678-9012`) or ask to delete data (`delete my personal information from your logs`).
+   - Run the check and observe the **DPDP Aadhaar Guard** or **GDPR Right to Erasure** policies mask the data or flag compliance in the logs.
+4. **Git Synchronization**:
+   - All changes have been synchronized with the remote GitHub repository.

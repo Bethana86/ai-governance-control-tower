@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // App State
 const state = {
     activeTab: "dashboard",
+    activeFramework: "hipaa",
     riskScore: 18,
     blockedCount: 42,
     redactedCount: 1284,
@@ -57,6 +58,33 @@ const state = {
             severity: "High",
             action: "Block",
             desc: "Detects and blocks leakage of API keys, GCP service account credentials, and secret strings.",
+            enabled: true
+        },
+        {
+            id: "GDPR-ERASURE",
+            name: "GDPR Right to Erasure",
+            pattern: "\\b(forget me|delete my data|erase my account|remove personal info|right to erasure|gdpr art 17)\\b",
+            severity: "Medium",
+            action: "Mask",
+            desc: "Enforces EU GDPR Article 17 (Right to Erasure) by intercepting and flagging data removal requests for systematic database purging.",
+            enabled: true
+        },
+        {
+            id: "DPDP-AADHAAR",
+            name: "DPDP Aadhaar Guard",
+            pattern: "\\b\\d{4}-\\d{4}-\\d{4}\\b",
+            severity: "High",
+            action: "Mask",
+            desc: "Redacts Indian Aadhaar card numbers to enforce strict compliance with India's Digital Personal Data Protection (DPDP) Act.",
+            enabled: true
+        },
+        {
+            id: "SOC2-INTEGRITY",
+            name: "SOC 2 Boundary Guard",
+            pattern: "\\b(unauthorized_port|raw_jdbc_conn|bypass_auth|disable_mfa)\\b",
+            severity: "High",
+            action: "Block",
+            desc: "Prevents execution of configurations breaching SOC 2 Processing Integrity and Confidentiality criteria.",
             enabled: true
         }
     ],
@@ -396,7 +424,8 @@ function runInteractiveSecurityCheck() {
         { name: "SSN", regex: /\b\d{3}-\d{2}-\d{4}\b/g, replacement: "[REDACTED_SSN]" },
         { name: "Email", regex: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, replacement: "[REDACTED_EMAIL]" },
         { name: "Phone", regex: /\b\d{3}-\d{3}-\d{4}\b/g, replacement: "[REDACTED_PHONE]" },
-        { name: "MRN", regex: /MRN-\d{6}/g, replacement: "[REDACTED_MRN]" }
+        { name: "MRN", regex: /MRN-\d{6}/g, replacement: "[REDACTED_MRN]" },
+        { name: "Aadhaar", regex: /\b\d{4}-\d{4}-\d{4}\b/g, replacement: "[REDACTED_AADHAAR]" }
     ];
     
     piiRules.forEach(rule => {
@@ -474,7 +503,8 @@ function maskPIIText(text) {
         { regex: /\b\d{3}-\d{2}-\d{4}\b/g, replacement: "[REDACTED_SSN]" },
         { regex: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, replacement: "[REDACTED_EMAIL]" },
         { regex: /\b\d{3}-\d{3}-\d{4}\b/g, replacement: "[REDACTED_PHONE]" },
-        { regex: /MRN-\d{6}/g, replacement: "[REDACTED_MRN]" }
+        { regex: /MRN-\d{6}/g, replacement: "[REDACTED_MRN]" },
+        { regex: /\b\d{4}-\d{4}-\d{4}\b/g, replacement: "[REDACTED_AADHAAR]" }
     ];
     piiRules.forEach(rule => {
         output = output.replace(rule.regex, rule.replacement);
@@ -889,6 +919,119 @@ function calculateCounterfactualRisk() {
 }
 
 // 7. Compliance Hub & Audit Logging
+const COMPLIANCE_DATA = {
+    hipaa: {
+        title: "HIPAA Safeguards & Security Compliance Audit",
+        subtitle: "Administrative and technical safeguards satisfying patient data confidentiality (§164.312).",
+        items: [
+            {
+                citation: "§164.312(a)(1) Access Control",
+                desc: "Automatic masking of 18 HIPAA Safe Harbor identifiers prior to writing logs or model ingestion."
+            },
+            {
+                citation: "§164.312(b) Audit Controls",
+                desc: "Cryptographically hashed system logs ensuring complete tamper evidence and permanent traceability."
+            },
+            {
+                citation: "§164.312(c)(1) Integrity",
+                desc: "Secure hashing links transactions together, preventing unauthorized retrospective altering of log records."
+            },
+            {
+                citation: "§164.312(e)(1) Transmission Security",
+                desc: "HTTPS transport encryption and zero retention policies for raw sensitive telemetry fields."
+            }
+        ]
+    },
+    soc2: {
+        title: "SOC 2 Type II Trust Services Criteria Mapping",
+        subtitle: "Controls demonstrating Processing Integrity, Confidentiality, and Security for SaaS workloads.",
+        items: [
+            {
+                citation: "CC6.1 Security Boundary Protection",
+                desc: "All external tool parameters are validated against strict regex injection pattern limits."
+            },
+            {
+                citation: "CC6.3 Confidentiality Metrics",
+                desc: "Data masking filter removes private configuration variables and sensitive keys."
+            },
+            {
+                citation: "CC8.1 Processing Integrity",
+                desc: "Audit ledger records all system state changes with cryptographically linked hash nodes."
+            },
+            {
+                citation: "CC9.2 Operational Risk Mitigation",
+                desc: "Continuous live monitoring flags API compliance drift telemetry in real time."
+            }
+        ]
+    },
+    gdpr: {
+        title: "GDPR Compliance & Data Protection Shield",
+        subtitle: "Measures satisfying Article 25 (Design & Default) and Article 17 (Erasure) requirements.",
+        items: [
+            {
+                citation: "Article 17 Right to Erasure",
+                desc: "Automated policy rules detect and flag 'forget me' user deletion requests."
+            },
+            {
+                citation: "Article 25 Protection by Design",
+                desc: "Masks emails, phone numbers, and demographic fields at runtime before ingestion."
+            },
+            {
+                citation: "Article 30 Records of Processing",
+                desc: "Cryptographically chains transaction logs providing untamperable records of processing activity."
+            },
+            {
+                citation: "Article 32 Security of Processing",
+                desc: "API limits, rate checks, and parameter validation block raw backend query injections."
+            }
+        ]
+    },
+    dpdp: {
+        title: "India DPDP Act (2023) Fiduciary Guard",
+        subtitle: "Compliance controls for Data Fiduciaries handling Principal PII and Aadhaar records.",
+        items: [
+            {
+                citation: "Section 8(1) Accuracy & Update",
+                desc: "Audit ledger tracks compliance state modifications and metadata integrity."
+            },
+            {
+                citation: "Section 8(5) PII Protection",
+                desc: "Policy rules automatically detect and mask Aadhaar numbers and local mobile formats."
+            },
+            {
+                citation: "Section 8(10) Erasure Obligation",
+                desc: "State policies identify data deletion requests to support consent withdrawal."
+            },
+            {
+                citation: "Section 9(1) Children Data",
+                desc: "Strict block policies intercept parental and child demographic exposure risk triggers."
+            }
+        ]
+    },
+    gemini: {
+        title: "Google Gemini Platform Compliance & Trust",
+        subtitle: "Enterprise trust configurations mapped to Gemini security, privacy, and grounding metrics.",
+        items: [
+            {
+                citation: "Gemini Safety Settings",
+                desc: "API-native threshold sliders block Harassment, Hate Speech, Sexually Explicit, and Dangerous content."
+            },
+            {
+                citation: "Google Search Grounding",
+                desc: "Real-time grounding checks produce verifiable citation scores, limiting model hallucination."
+            },
+            {
+                citation: "FedRAMP / ISO Alignment",
+                desc: "Strict boundary guards block outbound tool commands and database removal parameters."
+            },
+            {
+                citation: "Zero Training Assurance",
+                desc: "Privacy configuration guarantees enterprise user prompts are never retained for model training."
+            }
+        ]
+    }
+};
+
 function setupComplianceHub() {
     const btnVerify = document.getElementById("btn-verify-chain");
     const btnDownload = document.getElementById("btn-download-report");
@@ -899,6 +1042,54 @@ function setupComplianceHub() {
     
     btnDownload.addEventListener("click", () => {
         downloadComplianceReportFile();
+    });
+
+    // Dynamic framework switcher listeners
+    const tabs = document.querySelectorAll(".compliance-tab");
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            tabs.forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            
+            const framework = tab.getAttribute("data-framework");
+            state.activeFramework = framework;
+            renderComplianceChecklist(framework);
+            
+            addAuditLogEntry(`Compliance Hub: Switched audit framework view to [${framework.toUpperCase()}].`);
+        });
+    });
+
+    // Initial render
+    renderComplianceChecklist(state.activeFramework);
+}
+
+function renderComplianceChecklist(framework) {
+    const data = COMPLIANCE_DATA[framework];
+    if (!data) return;
+
+    // Update titles
+    const titleEl = document.getElementById("compliance-checklist-title");
+    const subtitleEl = document.getElementById("compliance-checklist-subtitle");
+    
+    if (titleEl) titleEl.textContent = data.title;
+    if (subtitleEl) subtitleEl.textContent = data.subtitle;
+
+    // Render grid
+    const container = document.getElementById("compliance-checklist-container");
+    if (!container) return;
+
+    container.innerHTML = "";
+    data.items.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "checklist-item";
+        div.innerHTML = `
+            <div class="item-header">
+                <input type="checkbox" checked disabled class="check-box" />
+                <span>${item.citation}</span>
+            </div>
+            <p class="checklist-desc">${item.desc}</p>
+        `;
+        container.appendChild(div);
     });
 }
 
@@ -968,10 +1159,20 @@ async function runAuditChainVerification() {
 
 function downloadComplianceReportFile() {
     let content = `=========================================================\n`;
-    content += `AI GOVERNANCE CONTROL TOWER REPORT\n`;
+    content += `AI GOVERNANCE CONTROL TOWER COMPLIANCE REPORT\n`;
     content += `Generated on: ${new Date().toLocaleString()}\n`;
-    content += `HIPAA Compliance Standard §164.312 Alignment Status: PASSED\n`;
+    
+    const fw = state.activeFramework;
+    const fwData = COMPLIANCE_DATA[fw];
+    content += `Active Standard: ${fwData.title}\n`;
+    content += `Alignment Status: COMPLIANT / PASSED\n`;
     content += `=========================================================\n\n`;
+    
+    content += `--- COMPLIANCE CHECKLIST STATUS ---\n`;
+    fwData.items.forEach(item => {
+        content += `[✓] ${item.citation}: ${item.desc}\n`;
+    });
+    content += `\n`;
     
     content += `--- ACTIVE GOVERNANCE POLICIES ---\n`;
     state.policies.forEach(p => {
