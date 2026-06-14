@@ -40,9 +40,12 @@ The background server is running and serving the updated assets.
    - Notice the checklist updates dynamically to present aligned controls and section numbers (e.g. Section 8(5) Aadhaar shielding under the DPDP Act).
    - Click **Verify Chain Integrity** to test the tamper-evident SHA-256 blockchain ledger.
    - Click **Export Audit Report** to download a formatted text file capturing the active standard checklist.
-3. **Test the New Heuristics**:
-   - Go to the **Safety & Security Playground** (or use the Policy dry-run box).
-   - Enter a prompt with an Aadhaar card (e.g. `1234-5678-9012`) or ask to delete data (`delete my personal information from your logs`).
-   - Run the check and observe the **DPDP Aadhaar Guard** or **GDPR Right to Erasure** policies mask the data or flag compliance in the logs.
+3. **Test Multi-Agent Orchestration (Agentic Hub)**:
+   - Navigate to the **Agentic Hub** tab in the sidebar.
+   - Observe the **Agent Network Registry** showing active/idle status badges for each forecasting agent (Orchestrator, TimesFM, BQML, Chatbot).
+   - Watch the **Interagent Communication & Policy Intercepts** console update automatically as agents simulate routine background validations.
+   - Go to the **What-If Shock Simulator** card, select a dataset context (e.g., *Retail Sales & Demand (Daily)*), adjust the shock slider to `+30%`, and click **Trigger Agentic Run**.
+   - Observe the terminal log step-by-step reasoning thought loops, security gateway intercept validations, ensembled ARIMA and TimesFM outputs, and the final combined forecast results.
+   - Navigate back to the **Compliance Hub** tab; verify that a new cryptographic log entry (e.g. `Multi-Agent Simulation: Combined ensembled forecast...`) has been written, and run **Verify Chain Integrity** to validate the hash link.
 4. **Git Synchronization**:
    - All changes have been synchronized with the remote GitHub repository.

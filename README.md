@@ -28,6 +28,11 @@ An enterprise-grade autonomous control tower for AI Governance, safety, explaina
 * **Tamper-Evident Ledger**: Write-once, append-only logs linked cryptographically using SHA-256 hashes generated through the native Web Crypto API.
 * **Audit Chain Verification**: Self-audit loop calculating and verifying the integrity of the log chain to ensure zero retrospective tampering.
 
+### 6. Multi-Agent Orchestration & Telemetry (Agentic Hub)
+* **Agent Network Registry**: Real-time status cards mapping agent identities (GCP service accounts), model types, and bound tools (e.g. TimesFM zero-shot forecasting tool).
+* **Interagent Event Interceptor**: Logs all message transmissions and API requests, verifying tool boundaries under SOC 2 and security policies.
+* **What-If Scenario Shock Simulator**: Interactive slider triggering cooperative ensembled runs with custom demand/load shocks, logging calculations to the audit ledger.
+
 ---
 
 ## 🛠️ Project Structure

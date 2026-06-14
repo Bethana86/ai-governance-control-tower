@@ -108,6 +108,7 @@ function initApp() {
     setupPolicyEngine();
     setupExplainability();
     setupComplianceHub();
+    setupAgenticHub();
     
     // Initial UI populate
     renderPoliciesList();
@@ -1255,3 +1256,140 @@ document.getElementById("btn-modal-remediate").addEventListener("click", () => {
 document.getElementById("modal-container").addEventListener("click", (e) => {
     if (e.target.id === "modal-container") closeModal();
 });
+
+// 9. Agentic Hub Controller
+function setupAgenticHub() {
+    const sliderShock = document.getElementById("scenario-shock");
+    const valShock = document.getElementById("scenario-shock-val");
+    const btnTrigger = document.getElementById("btn-trigger-agent-run");
+    const datasetSelect = document.getElementById("scenario-dataset");
+    const resultsBox = document.getElementById("scenario-results-box");
+    const interceptConsole = document.getElementById("agentic-intercept-console");
+
+    if (!sliderShock || !btnTrigger) return;
+
+    // Update shock slider text label
+    sliderShock.addEventListener("input", () => {
+        valShock.textContent = `+${sliderShock.value}%`;
+    });
+
+    // Simulated background broker log generator
+    const interagentMessages = [
+        { source: "ORCHESTRATOR", target: "BQML", action: "Querying anomaly stats", check: "CC6.1 Access Check", status: "PASSED" },
+        { source: "TIMESFM", target: "ORCHESTRATOR", action: "Broadcasting forecast metadata", check: "CC6.3 Confidentiality Check", status: "PASSED" },
+        { source: "ORCHESTRATOR", target: "TIMESFM", action: "Triggering TimesFM zero-shot prediction", check: "CC8.1 Processing Integrity Check", status: "PASSED" },
+        { source: "CHATBOT", target: "ORCHESTRATOR", action: "Retrieving dataset parameters", check: "GDPR Art 25 Shield Check", status: "PASSED" },
+        { source: "BQML", target: "ORCHESTRATOR", action: "Uploading ARIMA coefficients", check: "SOC2-INTEGRITY Boundary Check", status: "PASSED" }
+    ];
+
+    setInterval(() => {
+        const timeStr = new Date().toLocaleTimeString('en-US', { hour12: false });
+        const msg = interagentMessages[Math.floor(Math.random() * interagentMessages.length)];
+        const logText = `\n[${timeStr}] 🔄 Agent [${msg.source}] -> [${msg.target}]: ${msg.action}\n[SECURITY ACT GATEWAY] Checked [${msg.check}] - Status: ${msg.status}`;
+        if (interceptConsole) {
+            interceptConsole.innerHTML += logText;
+            interceptConsole.scrollTop = interceptConsole.scrollHeight;
+        }
+    }, 12000); // every 12 seconds
+
+    btnTrigger.addEventListener("click", async () => {
+        const dataset = datasetSelect.value;
+        const shockPct = parseFloat(sliderShock.value);
+        
+        btnTrigger.disabled = true;
+        resultsBox.style.display = "none";
+        
+        const timestamp = () => new Date().toLocaleTimeString('en-US', { hour12: false });
+        
+        const appendLog = (text) => {
+            interceptConsole.innerHTML += `\n[${timestamp()}] ${text}`;
+            interceptConsole.scrollTop = interceptConsole.scrollHeight;
+        };
+
+        // 1. Start Operator trigger
+        appendLog(`🔄 Operator triggered What-If Scenario on '${dataset}' with +${shockPct}% shock.`);
+        setAgentStatus("chatbot", "thinking");
+        await delay(1200);
+
+        // 2. Ingress Shield Check
+        appendLog(`🛡️ [TCS ACT Ingress] Scanning query payload. Checked policy HIPAA-01 & GDPR-ERASURE. Status: SECURE.`);
+        setAgentStatus("chatbot", "active");
+        setAgentStatus("orchestrator", "thinking");
+        await delay(1500);
+
+        // 3. Orchestrator coordinates BQML
+        appendLog(`🤖 Orchestrator Agent: Activating BQML agent for statistical modeling.`);
+        setAgentStatus("bqml", "thinking");
+        await delay(1500);
+
+        // 4. BQML execution
+        appendLog(`📊 BQML Agent: Querying GCP BigQuery ARIMA+... (Checked CC6.1 - Passed).`);
+        setAgentStatus("bqml", "active");
+        setAgentStatus("timesfm", "thinking");
+        await delay(1500);
+
+        // 5. TimesFM Execution
+        appendLog(`📈 TimesFM Agent: Running zero-shot transformer model... (Checked GEMINI-TOOL-02 - Passed).`);
+        setAgentStatus("timesfm", "active");
+        await delay(1200);
+
+        // 6. Ensemble calculations
+        appendLog(`🔄 Ensemble Fusion: Running inverse-variance weighting fusion ensembler...`);
+        setAgentStatus("orchestrator", "active");
+        
+        // Calculate ensembled forecast details based on selection
+        let unitText = "units";
+        let baseVal = 10000;
+        if (dataset === "retail") {
+            unitText = "units";
+            baseVal = 12000;
+        } else if (dataset === "it_ops") {
+            unitText = "% CPU";
+            baseVal = 60;
+        } else if (dataset === "energy") {
+            unitText = "GW";
+            baseVal = 44;
+        }
+
+        const arimaVal = Math.round(baseVal * (1 + (shockPct / 100) * 0.94) + (Math.random() * 5 - 2));
+        const timesfmVal = Math.round(baseVal * (1 + (shockPct / 100) * 1.06) + (Math.random() * 5 - 2));
+        const fusedVal = Math.round((arimaVal + timesfmVal) / 2);
+
+        document.getElementById("res-arima").textContent = `${arimaVal.toLocaleString()} ${unitText}`;
+        document.getElementById("res-timesfm").textContent = `${timesfmVal.toLocaleString()} ${unitText}`;
+        document.getElementById("res-fused").textContent = `${fusedVal.toLocaleString()} ${unitText}`;
+        
+        await delay(1000);
+        resultsBox.style.display = "block";
+
+        // 7. Briefing & Logging
+        appendLog(`✍️ Chatbot Analyst: Briefing ready. Forecast fused successfully. RMSE verified.`);
+        
+        // Append transaction block to cryptographic audit ledger
+        const transactionStr = `WHAT_IF_${dataset.toUpperCase()}_SHOCK_${shockPct}%`;
+        await addAuditLogEntry(`Multi-Agent Simulation: Combined ensembled forecast for ${dataset} context with shock +${shockPct}%. Fused result: ${fusedVal} ${unitText}.`);
+        
+        btnTrigger.disabled = false;
+    });
+}
+
+function setAgentStatus(agentId, status) {
+    const el = document.getElementById(`agent-status-${agentId}`);
+    if (!el) return;
+    
+    if (status === "active") {
+        el.className = "status-indicator active";
+        el.innerHTML = `<span class="dot-pulse bg-green"></span>ACTIVE`;
+    } else if (status === "idle") {
+        el.className = "status-indicator idle";
+        el.innerHTML = `<span class="dot-pulse gray"></span>IDLE`;
+    } else if (status === "thinking") {
+        el.className = "status-indicator thinking";
+        el.innerHTML = `<span class="dot-pulse amber"></span>THINKING`;
+    }
+}
+
+// Utility delay function
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

@@ -82,6 +82,15 @@
                     </svg>
                     <span>Compliance Hub</span>
                 </button>
+                <button class="nav-btn" data-tab="agentic" id="btn-tab-agentic">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span>Agentic Hub</span>
+                </button>
             </nav>
 
             <div class="sidebar-footer">
@@ -624,6 +633,156 @@
                                 </svg>
                                 <span>Export Audit Report</span>
                             </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Agentic Hub -->
+            <section class="tab-panel" id="tab-agentic">
+                <div class="section-desc">
+                    <h2>Multi-Agent Orchestration & Telemetry</h2>
+                    <p class="text-secondary">Monitor and govern autonomous agent interactions. The TCS ACT middleware enforces real-time validation checks on communication channels, tool calls, and model invocations across the agentic network.</p>
+                </div>
+
+                <div class="compliance-layout">
+                    <!-- Top: Agent Cards Grid -->
+                    <div class="compliance-card w-full">
+                        <div class="card-header">
+                            <h3 class="card-title">Agent Network Registry</h3>
+                            <p class="card-subtitle">Active agents managed under Google Antigravity SDK & TCS ACT gateway</p>
+                        </div>
+                        
+                        <div class="agent-cards-container">
+                            <!-- Agent Card 1: Orchestrator Analyst -->
+                            <div class="agent-card" id="agent-card-orchestrator">
+                                <div class="agent-card-header">
+                                    <div class="agent-identity">
+                                        <span class="agent-badge active">Orchestrator</span>
+                                        <h4>Analyst Coordinator</h4>
+                                    </div>
+                                    <span class="status-indicator active" id="agent-status-orchestrator"><span class="dot-pulse bg-green"></span>ACTIVE</span>
+                                </div>
+                                <div class="agent-card-body">
+                                    <p class="agent-meta-row"><span>Identity:</span> <code>sa:fusion-ai-predictor</code></p>
+                                    <p class="agent-meta-row"><span>Model:</span> <code>gemini-1.5-pro</code></p>
+                                    <p class="agent-meta-row"><span>Bound Tools:</span> <code class="tool-tag">data_loader</code> <code class="tool-tag">ensemble_fusion</code></p>
+                                </div>
+                            </div>
+
+                            <!-- Agent Card 2: TimesFM Forecast Agent -->
+                            <div class="agent-card" id="agent-card-timesfm">
+                                <div class="agent-card-header">
+                                    <div class="agent-identity">
+                                        <span class="agent-badge">TimesFM Agent</span>
+                                        <h4>Zero-Shot Deep Forecaster</h4>
+                                    </div>
+                                    <span class="status-indicator idle" id="agent-status-timesfm"><span class="dot-pulse gray"></span>IDLE</span>
+                                </div>
+                                <div class="agent-card-body">
+                                    <p class="agent-meta-row"><span>Identity:</span> <code>sa:fusion-ai-predictor</code></p>
+                                    <p class="agent-meta-row"><span>Model:</span> <code>TimesFM-1.0-200M</code></p>
+                                    <p class="agent-meta-row"><span>Bound Tools:</span> <code class="tool-tag">timesfm_predict</code> <code class="tool-tag">quantile_calc</code></p>
+                                </div>
+                            </div>
+
+                            <!-- Agent Card 3: BigQuery ML Agent -->
+                            <div class="agent-card" id="agent-card-bqml">
+                                <div class="agent-card-header">
+                                    <div class="agent-identity">
+                                        <span class="agent-badge">BQML Agent</span>
+                                        <h4>Statistical Forecast Modeler</h4>
+                                    </div>
+                                    <span class="status-indicator idle" id="agent-status-bqml"><span class="dot-pulse gray"></span>IDLE</span>
+                                </div>
+                                <div class="agent-card-body">
+                                    <p class="agent-meta-row"><span>Identity:</span> <code>sa:fusion-ai-predictor</code></p>
+                                    <p class="agent-meta-row"><span>Model:</span> <code>ARIMA+ / KMeans</code></p>
+                                    <p class="agent-meta-row"><span>Bound Tools:</span> <code class="tool-tag">bq_arima_forecast</code> <code class="tool-tag">bq_anomaly_detect</code></p>
+                                </div>
+                            </div>
+
+                            <!-- Agent Card 4: Chatbot Analyst Agent -->
+                            <div class="agent-card" id="agent-card-chatbot">
+                                <div class="agent-card-header">
+                                    <div class="agent-identity">
+                                        <span class="agent-badge">Chatbot Agent</span>
+                                        <h4>What-If Scenario Analyst</h4>
+                                    </div>
+                                    <span class="status-indicator active" id="agent-status-chatbot"><span class="dot-pulse bg-green"></span>ACTIVE</span>
+                                </div>
+                                <div class="agent-card-body">
+                                    <p class="agent-meta-row"><span>Identity:</span> <code>sa:fusion-ai-operator</code></p>
+                                    <p class="agent-meta-row"><span>Model:</span> <code>gemini-1.5-flash</code></p>
+                                    <p class="agent-meta-row"><span>Bound Tools:</span> <code class="tool-tag">trigger_whatif</code> <code class="tool-tag">format_briefing</code></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom: Log Intercept Console & What-if Panel -->
+                    <div class="dashboard-grid mt-4">
+                        <!-- Left: Event Logs -->
+                        <div class="grid-card col-8">
+                            <div class="card-header">
+                                <h3 class="card-title">Interagent Communication & Policy Intercepts</h3>
+                                <p class="card-subtitle">Real-time gateway monitoring of data exchange and API calls</p>
+                            </div>
+                            <div class="terminal-container" style="height: 250px;">
+                                <div id="agentic-intercept-console" style="font-family: var(--font-mono); font-size: 0.72rem; color: #81c995; white-space: pre-wrap; line-height: 1.5; overflow-y: auto; height: 100%;">[SYSTEM START] Interagent Broker initialized. Service Accounts mapped.
+[SECURITY INTERCEPT] Checked CC6.1 Security boundary - Status: COMPLIANT</div>
+                            </div>
+                        </div>
+
+                        <!-- Right: What-if Simulation Panel -->
+                        <div class="grid-card col-4 flex-between">
+                            <div class="card-header">
+                                <h3 class="card-title">What-If Shock Simulator</h3>
+                                <p class="card-subtitle">Force a system shock to run ensembled predictions via agent cooperation</p>
+                            </div>
+
+                            <div class="report-box" style="gap: 12px; background: transparent; box-shadow: none; border: none; padding: 0;">
+                                <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+                                    <label class="form-label" style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-secondary);" for="scenario-dataset">Select Dataset Context</label>
+                                    <select class="form-select" id="scenario-dataset" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); font-family: var(--font-sans); font-size: 0.85rem;">
+                                        <option value="retail">Retail Sales & Demand (Daily)</option>
+                                        <option value="it_ops">IT System CPU Load (5-min)</option>
+                                        <option value="energy">Energy Grid Power Load (Hourly)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group" style="display: flex; flex-direction: column; gap: 4px; margin-top: 10px;">
+                                    <div class="slider-info" style="display: flex; justify-content: space-between; font-size: 0.8rem;">
+                                        <label class="form-label" style="font-weight: 700; color: var(--color-text-secondary);" for="scenario-shock">Simulated Demand/Load Shock</label>
+                                        <span class="slider-value" id="scenario-shock-val" style="font-weight: 700; color: var(--accent-indigo);">+15%</span>
+                                    </div>
+                                    <input type="range" class="form-range" id="scenario-shock" min="10" max="50" step="5" value="15" />
+                                </div>
+
+                                <button class="btn btn-primary w-full mt-2" id="btn-trigger-agent-run">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                                        <polygon points="5 3 19 12 5 21 5 3"/>
+                                    </svg>
+                                    <span>Trigger Agentic Run</span>
+                                </button>
+                            </div>
+
+                            <!-- Forecast Result Summary -->
+                            <div class="report-box mt-3" id="scenario-results-box" style="display:none;">
+                                <h4 style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent-indigo); margin-bottom: 6px;">Ensembled Forecast:</h4>
+                                <div class="report-row" style="margin-bottom: 2px;">
+                                    <span>ARIMA+ (Statistical)</span>
+                                    <span id="res-arima">12,450 units</span>
+                                </div>
+                                <div class="report-row" style="margin-bottom: 2px;">
+                                    <span>TimesFM (Zero-Shot)</span>
+                                    <span id="res-timesfm">12,810 units</span>
+                                </div>
+                                <div class="report-row font-bold" style="border-top: 1px solid var(--border-color); padding-top: 4px; margin-top: 4px;">
+                                    <span>Fused Forecast</span>
+                                    <span class="text-green" id="res-fused">12,594 units</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
