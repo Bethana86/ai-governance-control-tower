@@ -1,6 +1,6 @@
-# TCS ACT - Production Transition Blueprint
+# ACT - Production Transition Blueprint
 
-This document outlines the multi-phase engineering plan required to transition the **TCS ACT - Agent Control Tower** from a high-fidelity simulator prototype into a real-time, production-grade enterprise middleware gateway.
+This document outlines the multi-phase engineering plan required to transition the **ACT - Agent Control Tower** from a high-fidelity simulator prototype into a real-time, production-grade enterprise middleware gateway.
 
 ---
 
@@ -13,7 +13,7 @@ In production, all safety checks, policies, and redactions must execute on a ser
        │ (Prompt payload)
        ▼
 ┌────────────────────────────────────────────────────────┐
-│  TCS ACT Middleware Gateway (FastAPI / Go)            │
+│  ACT Middleware Gateway (FastAPI / Go)            │
 │  1. Ingress Shield (Jailbreak, PII Redaction)          │
 │  2. Policy Engine Validation                           │
 └────────────────────────────────────────────────────────┘
@@ -23,7 +23,7 @@ In production, all safety checks, policies, and redactions must execute on a ser
        │ (Raw model response + Grounding Metadata)
        ▼
 ┌────────────────────────────────────────────────────────┐
-│  TCS ACT Egress Shield                                 │
+│  ACT Egress Shield                                 │
 │  1. Output Verification (Tool parameters, secret keys) │
 │  2. SHA-256 Block Generation & Ledger Logging          │
 └────────────────────────────────────────────────────────┘
