@@ -1,20 +1,29 @@
 # High-Level Architecture & System Design Document (HLD)
 ## Transitioning Agent Policy and Compliance Tower to Google AI Ecosystem (Gemini Enterprise Agent Platform)
 
-**Document Version:** 1.0  
+**Document Version:** 1.1  
 **Author:** AI Governance & Agentic Security Engineering Team  
-**Target Platform:** Google Cloud Platform (GCP) — Vertex AI, Gemini Enterprise Agent Platform, Cloud Run / GKE, Cloud DLP, Cloud KMS, BigQuery  
-**Status:** PROPOSED ARCHITECTURE
+**Target Platform:** Google Cloud Platform (GCP) — Gemini Enterprise Agent Platform, Agent Engine (Agent Runtime), Agent Studio, Agent Search, Cloud Run / GKE, Cloud DLP, Cloud KMS, BigQuery  
+**Status:** PROPOSED ARCHITECTURE (ALIGNED WITH LATEST GOOGLE CLOUD BRANDING)
 
 ---
 
 ## 1. Executive Summary & Architectural Vision
 
-The **Agent Policy and Compliance Tower** is an enterprise-grade governance, security guardrail, and audit platform designed to oversee autonomous multi-agent systems. This High-Level Design (HLD) document defines the architectural blueprint for transitioning the interactive control tower prototype into a real-time, production-grade middleware and observability system built natively on the **Google AI Ecosystem**, specifically leveraging the **Gemini Enterprise Agent Platform** and **Vertex AI**.
+The **Agent Policy and Compliance Tower** is an enterprise-grade governance, security guardrail, and audit platform designed to oversee autonomous multi-agent systems. This High-Level Design (HLD) document defines the architectural blueprint for transitioning the interactive control tower prototype into a real-time, production-grade middleware and observability system built natively on the **Google AI Ecosystem**, specifically leveraging the **Gemini Enterprise Agent Platform** (formerly Vertex AI Platform).
+
+> [!NOTE]
+> **Google Cloud AI Naming Update Notice**:
+> As part of Google Cloud's agentic AI strategy, **Vertex AI** has evolved into the unified **Gemini Enterprise Agent Platform**. Specific services updated in this design include:
+> - **Vertex AI Platform** → **Gemini Enterprise Agent Platform**
+> - **Vertex AI Studio** → **Agent Studio**
+> - **Vertex AI Agent Builder / Engine** → **Agent Engine (Agent Runtime)**
+> - **Vertex AI Search** → **Agent Search & Grounding**
+> - **Vertex AI Native Safety Filters** → **Gemini Safety Guardrails**
 
 ### Core Objectives
 1. **Zero-Trust Interception**: Intercept and evaluate 100% of inter-agent messages, human inputs, and tool calls before execution.
-2. **Native Gemini Integration**: Seamlessly interface with Google Vertex AI SDKs (`google-genai`), Gemini 1.5 Pro / Flash models, Vertex AI Search Grounding, and Vertex Safety Filters.
+2. **Native Gemini Integration**: Seamlessly interface with Google Agent SDKs (`google-genai`), Gemini 1.5 Pro / Flash models, Agent Search Grounding, and Gemini Safety Guardrails.
 3. **Multi-Framework Regulatory Compliance**: Enforce automated guardrails for **HIPAA**, **SOC 2 Type II**, **EU GDPR** (Art. 17 Right to Erasure), **India DPDP Act 2023** (Aadhaar redaction), and **Google Gemini Trust Platform** standards.
 4. **Sub-25ms Guardrail Overhead**: Maintain ultra-low latency ingress/egress filtering via high-performance microservices (Go / FastAPI on Cloud Run).
 5. **Cryptographically Verifiable Ledger**: Secure all transaction logs into a tamper-evident SHA-256 block chain signed via **Google Cloud KMS** and persisted to **BigQuery / Cloud Spanner**.
@@ -23,7 +32,7 @@ The **Agent Policy and Compliance Tower** is an enterprise-grade governance, sec
 
 ## 2. Enterprise Reference Architecture
 
-The diagram below illustrates the end-to-end production architecture deployed on Google Cloud Platform, connecting client applications, the Policy Tower Gateway, the Vertex AI Agent Builder runtime, external tools, and the cryptographic audit pipeline.
+The diagram below illustrates the end-to-end production architecture deployed on Google Cloud Platform, connecting client applications, the Policy Tower Gateway, the Gemini Enterprise Agent Platform runtime, external tools, and the cryptographic audit pipeline.
 
 ```mermaid
 flowchart TD
@@ -45,8 +54,8 @@ flowchart TD
         EGR["Policy Egress Gateway & Tool Parameter Guard"]
     end
 
-    subgraph GeminiPlatform["Google AI Ecosystem & Vertex AI Agent Runtime"]
-        AB["Vertex AI Agent Builder (Orchestrator - Gemini 1.5 Pro)"]
+    subgraph GeminiPlatform["Google AI Ecosystem — Gemini Enterprise Agent Platform"]
+        AB["Agent Engine / Agent Runtime (Orchestrator - Gemini 1.5 Pro)"]
         
         subgraph MultiAgentNetwork["Fusion AI Agentic Network"]
             A_ORCH["Orchestrator Agent (Gemini 1.5 Pro)"]
@@ -55,8 +64,8 @@ flowchart TD
             A_BOT["Chatbot Agent (Gemini 1.5 Flash)"]
         end
         
-        VSG["Vertex AI Search & Grounding Engine"]
-        VSF["Vertex AI Native Safety Filters"]
+        VSG["Agent Search & Grounding Engine"]
+        VSF["Gemini Safety Guardrails"]
     end
 
     subgraph LedgerObservability["Audit Ledger & Observability Pipeline"]
@@ -114,7 +123,7 @@ flowchart TD
   3. **Adversarial Injection Guard**: Evaluates prompt embeddings against a binary intent classification model to catch indirect prompt injection, systemic instruction overrides, and prefix escape attacks.
 
 ### 3.2 Gemini Enterprise Agent Platform & Multi-Agent Network
-- **Orchestration Framework**: Built on **Vertex AI Agent Builder (Reasoning Engine)** using Python `vertexai.preview.reasoning_engines`.
+- **Orchestration Framework**: Built on **Agent Engine (Agent Runtime)** within the Gemini Enterprise Agent Platform using python agent reasoning engines.
 - **Multi-Agent Network Components (Fusion AI Ecosystem)**:
   - **Orchestrator Agent (`sa:fusion-ai-orchestrator@gcp-project.iam`)**: Powered by `gemini-1.5-pro-002`. Manages ReAct loops, context assembly, multi-step planning, and agent delegating.
   - **TimesFM Forecasting Agent (`sa:fusion-ai-timesfm@gcp-project.iam`)**: Serves Google's **TimesFM 2.0** zero-shot foundation model deployed on Cloud Run with GPU support (NVIDIA T4/L4). Receives historical univariate time-series data and produces probabilistic demand predictions.
@@ -122,11 +131,11 @@ flowchart TD
   - **Chatbot Agent (`sa:fusion-ai-chatbot@gcp-project.iam`)**: Powered by `gemini-1.5-flash-002` for fast conversational interactions with internal operators and end-users.
 - **Identity & Security**: Each agent operates under a dedicated Google Cloud Service Account bound via **Workload Identity Federation** and restricted with granular IAM roles (`roles/bigquery.jobUser`, `roles/aiplatform.user`).
 
-### 3.3 Safety & Grounding Enforcement Engine
-- **Vertex AI Safety Configuration**:
-  The gateway dynamically maps UI threshold controls directly to `vertexai.generative_models.SafetySetting`:
+### 3.3 Gemini Safety Guardrails & Agent Search Grounding
+- **Gemini Safety Guardrail Configuration**:
+  The gateway dynamically maps UI threshold controls directly to safety settings:
   ```python
-  from vertexai.generative_models import HarmCategory, HarmBlockThreshold, SafetySetting
+  from google.genai.types import HarmCategory, HarmBlockThreshold, SafetySetting
 
   safety_settings = [
       SafetySetting(
@@ -143,8 +152,8 @@ flowchart TD
       ),
   ]
   ```
-- **Grounding Verification**:
-  Uses `Tool.from_google_search_retrieval(google_search_retrieval=...)` or Vertex AI Search Data Stores. The Policy Egress Gateway extracts `grounding_metadata`, evaluates citation overlap scores against domain authority whitelists, and flags responses under the 85% confidence threshold as `UNGROUNDED_WARNING`.
+- **Agent Search & Grounding Verification**:
+  Uses **Agent Search** data stores and grounding features. The Policy Egress Gateway extracts `grounding_metadata`, evaluates citation overlap scores against domain authority whitelists, and flags responses under the 85% confidence threshold as `UNGROUNDED_WARNING`.
 
 ### 3.4 Cryptographic Ledger & Audit Pipeline
 - **Block Structure**:
@@ -175,7 +184,7 @@ flowchart TD
 | **SOC 2 Type II** | CC6.1 & CC6.8 Tamper-Proof Audit Logging | SHA-256 block chain signing & append-only storage | Cloud KMS + BigQuery Audit Ledger |
 | **EU GDPR** | Art. 17 Right to Erasure & Art. 32 Encryption | Masking PII at rest and in flight; cryptographic key destruction for erasure | Cloud KMS + Cloud DLP De-identification |
 | **India DPDP Act 2023** | Section 8 Notice & Consent / Aadhaar Redaction | Regex & Cloud DLP scanning for 12-digit Aadhaar patterns (`\b\d{4}-\d{4}-\d{4}\b`) | Custom Policy Interceptor + Cloud DLP |
-| **Gemini Trust Platform** | Groundedness & Safety Standards | Automated grounding verification score calculation & safety threshold enforcement | Vertex AI Search Grounding + Safety Filters |
+| **Gemini Trust Platform** | Groundedness & Safety Standards | Automated grounding verification score calculation & safety threshold enforcement | Agent Search & Grounding + Gemini Safety Guardrails |
 
 ---
 
@@ -198,5 +207,5 @@ To ensure the Control Tower does not degrade real-time user experiences, the tot
 
 1. **Phase 1 (Infrastructure Setup)**: Provision Cloud Run services, Cloud DLP templates, Cloud KMS key rings, and BigQuery audit tables via Terraform.
 2. **Phase 2 (Gateway SDK Integration)**: Implement `google-genai` SDK wrappers with embedded policy interceptors in Python/Go.
-3. **Phase 3 (Vertex Agent Builder Integration)**: Wire Orchestrator, TimesFM, and BQML sub-agents into the Vertex AI Reasoning Engine environment.
+3. **Phase 3 (Agent Engine Integration)**: Wire Orchestrator, TimesFM, and BQML sub-agents into the Gemini Enterprise Agent Platform environment.
 4. **Phase 4 (Live Audit Verification)**: Run automated red-team simulations (prompt injections, PII leakage attempts) to validate end-to-end cryptographic block verification and real-time dashboard alerts.
