@@ -1,10 +1,10 @@
 # High-Level Architecture & System Design Document (HLD)
 ## Transitioning Agent Policy and Compliance Tower to Google AI Ecosystem (Gemini Enterprise Agent Platform)
 
-**Document Version:** 1.1  
+**Document Version:** 1.2  
 **Author:** AI Governance & Agentic Security Engineering Team  
 **Target Platform:** Google Cloud Platform (GCP) — Gemini Enterprise Agent Platform, Agent Engine (Agent Runtime), Agent Studio, Agent Search, Cloud Run / GKE, Cloud DLP, Cloud KMS, BigQuery  
-**Status:** PROPOSED ARCHITECTURE (ALIGNED WITH LATEST GOOGLE CLOUD BRANDING)
+**Status:** PROPOSED ARCHITECTURE (FEATURE-ALIGNED IMPLEMENTATION ROADMAP)
 
 ---
 
@@ -203,9 +203,66 @@ To ensure the Control Tower does not degrade real-time user experiences, the tot
 
 ---
 
-## 6. Implementation Plan & Next Steps
+## 6. Feature-Wise Implementation Plan & Deployment Roadmap
 
-1. **Phase 1 (Infrastructure Setup)**: Provision Cloud Run services, Cloud DLP templates, Cloud KMS key rings, and BigQuery audit tables via Terraform.
-2. **Phase 2 (Gateway SDK Integration)**: Implement `google-genai` SDK wrappers with embedded policy interceptors in Python/Go.
-3. **Phase 3 (Agent Engine Integration)**: Wire Orchestrator, TimesFM, and BQML sub-agents into the Gemini Enterprise Agent Platform environment.
-4. **Phase 4 (Live Audit Verification)**: Run automated red-team simulations (prompt injections, PII leakage attempts) to validate end-to-end cryptographic block verification and real-time dashboard alerts.
+The production rollout is structured feature-by-feature across 6 parallel workstreams, detailing specific milestones, deliverables, verification criteria, and deployment stages through to final production cutover.
+
+### Feature 1: Zero-Trust Gateway Ingress & Egress Shield
+* **Milestone 1.1 (High-Throughput Middleware Core)**:
+  - Deploy containerized FastAPI/Go proxy workers on Cloud Run with Always-On CPU allocation.
+  - Enforce sub-25ms guardrail SLA.
+* **Milestone 1.2 (Multi-Framework PII/PHI Redaction Engine)**:
+  - Integrate regex engine for local pattern matching (`\b\d{4}-\d{4}-\d{4}\b` Aadhaar, US SSN, MRN).
+  - Provision Google Cloud DLP API `projects.content.inspect` with custom `InfoType` detectors (`INDIA_AADHAAR`, `MEDICAL_RECORD_NUMBER`, `PERSON_NAME`).
+  - Map active policy rules to **HIPAA** (§164.312), **GDPR** (Art. 17), and **DPDP Act 2023** (Sec. 8).
+* **Milestone 1.3 (Adversarial Prompt Defense)**:
+  - Implement NeMo Guardrails / LLM-Guard classifier to catch jailbreaks, system instruction escapes, and indirect prompt injections.
+* **Milestone 1.4 (Tool Call Parameter Guardrail)**:
+  - Implement JSON Schema validator on model tool call outputs, blocking destructive system commands (`rm -rf`, shell injection patterns).
+
+### Feature 2: Gemini Enterprise Multi-Agent Network (Fusion AI Ecosystem)
+* **Milestone 2.1 (Orchestrator Agent Setup)**:
+  - Configure Orchestrator Agent (`sa:fusion-ai-orchestrator`) powered by `gemini-1.5-pro-002` inside **Agent Engine (Agent Runtime)**.
+* **Milestone 2.2 (TimesFM 2.0 Foundation Model Deployment)**:
+  - Deploy Google's **TimesFM 2.0** zero-shot forecasting model on GPU Cloud Run (NVIDIA T4/L4) for probabilistic univariate demand forecasting.
+* **Milestone 2.3 (BigQuery ML Analytics Agent)**:
+  - Connect BQML Agent (`sa:fusion-ai-bqml`) to query `ARIMA_PLUS` models via BigQuery Storage API.
+* **Milestone 2.4 (Conversational Chatbot Agent)**:
+  - Deploy low-latency Chatbot Agent (`sa:fusion-ai-chatbot`) powered by `gemini-1.5-flash-002`.
+* **Milestone 2.5 (Workload Identity & Service Account Security)**:
+  - Bind Service Accounts via Workload Identity Federation with granular GCP IAM permissions (`roles/bigquery.jobUser`, `roles/aiplatform.user`).
+
+### Feature 3: Dynamic Safety Guardrails & Agent Search Grounding
+* **Milestone 3.1 (Gemini Safety Guardrail Binding)**:
+  - Bind dashboard UI threshold controls to `google.genai.types.SafetySetting` across `HARM_CATEGORY_HARASSMENT`, `HATE_SPEECH`, `DANGEROUS_CONTENT`, and `SEXUALLY_EXPLICIT`.
+* **Milestone 3.2 (Agent Search Fact-Checking)**:
+  - Index enterprise knowledge bases into **Agent Search Data Stores**.
+  - Calculate citation grounding confidence scores on LLM outputs.
+* **Milestone 3.3 (Grounding Policy Enforcement)**:
+  - Automatically flag outputs below 85% grounding confidence with `UNGROUNDED_WARNING` and trigger human-in-the-loop audit reviews.
+
+### Feature 4: Immutable Cryptographic Audit Ledger & Compliance Exporter
+* **Milestone 4.1 (Tamper-Evident SHA-256 Chain)**:
+  - Implement block hashing algorithm linking `current.prev_hash === prev.hash`.
+  - Provision **Google Cloud KMS** Asymmetric Key Rings (`RSA_SIGN_PSS_2048_SHA256`) to sign each block digest.
+* **Milestone 4.2 (Append-Only BigQuery Storage)**:
+  - Configure BigQuery dataset `ai_governance_audit.ledger_blocks` with partition locks and read-only access restricted to the `Auditor` IAM role.
+* **Milestone 4.3 (Integrity Verifier & Exporter)**:
+  - Build automated background verifier to audit cryptographic hashes and generate downloadable PDF/CSV compliance reports for **SOC 2 Type II** audits.
+
+### Feature 5: Real-Time Control Tower Console & Telemetry Stream
+* **Milestone 5.1 (Cloud Pub/Sub & Telemetry Bridge)**:
+  - Publish governance events (`governance.events`) to Cloud Pub/Sub and serve real-time Server-Sent Events (SSE) / WebSockets to the front-end dashboard.
+* **Milestone 5.2 (OpenTelemetry Distributed Tracing)**:
+  - Instrument requests with OpenTelemetry (`traceparent`) to monitor multi-agent hops in **Cloud Trace** & **Cloud Monitoring**.
+* **Milestone 5.3 (Interactive Console UI)**:
+  - Wire live risk metrics, what-if shock simulator (+10% to +50%), and live inter-agent execution logs directly into the web UI.
+
+### Feature 6: Production CI/CD Infrastructure, Staging & Final Deployment
+* **Milestone 6.1 (Terraform IaC Provisioning)**:
+  - Write Terraform scripts for GCP infrastructure (Cloud Run, Cloud DLP templates, Cloud KMS, BigQuery, Pub/Sub, IAM Service Accounts).
+* **Milestone 6.2 (Automated Red-Teaming & Compliance Testing)**:
+  - Run CI/CD test suites executing automated prompt injection attacks, Aadhaar PII leakage tests, and ledger alteration verification.
+* **Milestone 6.3 (Canary Rollout & Final Production Cutover)**:
+  - Deploy Policy Gateway to Cloud Run / GKE using traffic splitting (10% -> 50% -> 100%).
+  - Complete production sign-off with SecOps and Compliance teams.
