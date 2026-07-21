@@ -99,6 +99,8 @@ async function computeSHA256(message) {
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+const API_BASE = (window.location.protocol.startsWith('http')) ? '' : 'http://localhost:8081';
+
 // Initializer
 function initApp() {
     setupNavigation();
@@ -124,6 +126,51 @@ function initApp() {
     // Initial UI populate
     renderPoliciesList();
     addAuditLogEntry("System Diagnostics completed successfully. Governance policies deployed.");
+
+    // Sync with Live FastAPI Backend Server
+    syncWithBackendServer();
+}
+
+// Real-Time Backend API Synchronization
+async function syncWithBackendServer() {
+    try {
+        // 1. Initial Telemetry Sync
+        const statsRes = await fetch(API_BASE + '/api/v1/telemetry/stats');
+        if (statsRes.ok) {
+            const stats = await statsRes.json();
+            if (stats.promptsScanned !== undefined) {
+                document.getElementById("metric-scanned-count").textContent = stats.promptsScanned.toLocaleString();
+                document.getElementById("metric-blocked-count").textContent = stats.promptsBlocked;
+                document.getElementById("metric-redacted-count").textContent = stats.piiRedactions;
+                document.getElementById("metric-latency-val").textContent = stats.avgLatencyMs + "ms";
+            }
+        }
+
+        // 2. SSE Telemetry Stream Listener
+        const sse = new EventSource(API_BASE + '/api/v1/telemetry/stream');
+        sse.onmessage = function(event) {
+            if (event.data) {
+                const s = JSON.parse(event.data);
+                if (s.promptsScanned !== undefined) {
+                    document.getElementById("metric-scanned-count").textContent = s.promptsScanned.toLocaleString();
+                    document.getElementById("metric-blocked-count").textContent = s.promptsBlocked;
+                    document.getElementById("metric-redacted-count").textContent = s.piiRedactions;
+                    document.getElementById("metric-latency-val").textContent = s.avgLatencyMs + "ms";
+                }
+            }
+        };
+
+        // 3. Agentic Network Status Sync
+        const netRes = await fetch(API_BASE + '/api/v1/agentic/network');
+        if (netRes.ok) {
+            const net = await netRes.json();
+            if (net.gcpProjectId) {
+                state.gcpProjectId = net.gcpProjectId;
+            }
+        }
+    } catch (e) {
+        console.log("Backend server sync operating in fallback mode:", e);
+    }
 }
 
 // 1. Navigation Controller
