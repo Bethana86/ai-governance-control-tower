@@ -110,6 +110,17 @@ function initApp() {
     setupComplianceHub();
     setupAgenticHub();
     
+    // Auto switch tab if URL query parameter ?tab=... is present
+    const urlParams = new URLSearchParams(window.location.search);
+    let tabParam = urlParams.get('tab');
+    if (tabParam) {
+        if (tabParam === 'rules') tabParam = 'policy';
+        if (tabParam === 'grounding') tabParam = 'security';
+        if (tabParam === 'audit') tabParam = 'explainability';
+        const targetBtn = document.querySelector(`.nav-btn[data-tab="${tabParam}"]`);
+        if (targetBtn) targetBtn.click();
+    }
+
     // Initial UI populate
     renderPoliciesList();
     addAuditLogEntry("System Diagnostics completed successfully. Governance policies deployed.");
