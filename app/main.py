@@ -5,13 +5,13 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.api import router_gateway, router_audit, router_telemetry
+from app.api import router_gateway, router_audit, router_telemetry, router_agentic
 
 def create_application() -> FastAPI:
     app = FastAPI(
         title=settings.PROJECT_NAME,
         version=settings.VERSION,
-        description="Enterprise Modular Policy & Regulatory Compliance Engine"
+        description="Enterprise Modular Policy & Regulatory Compliance Engine - Fusion AI Integration"
     )
 
     # CORS Setup
@@ -27,6 +27,7 @@ def create_application() -> FastAPI:
     app.include_router(router_gateway.router, prefix=settings.API_PREFIX)
     app.include_router(router_audit.router, prefix=settings.API_PREFIX)
     app.include_router(router_telemetry.router, prefix=settings.API_PREFIX)
+    app.include_router(router_agentic.router, prefix=settings.API_PREFIX)
 
     # Root UI Static Files Mount
     workspace_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -37,7 +38,7 @@ def create_application() -> FastAPI:
         if os.path.exists(index_path):
             with open(index_path, "r", encoding="utf-8") as f:
                 return HTMLResponse(content=f.read())
-        return HTMLResponse("<h1>Agent Policy and Compliance Tower - Modular App Running</h1>")
+        return HTMLResponse("<h1>Agent Policy and Compliance Tower - Fusion AI System Active</h1>")
 
     app.mount("/", StaticFiles(directory=workspace_dir, html=True), name="static")
 
