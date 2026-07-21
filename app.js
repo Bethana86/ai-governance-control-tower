@@ -131,6 +131,16 @@ function initApp() {
     syncWithBackendServer();
 }
 
+function safeSetText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+}
+
+function safeSetHtml(id, html) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+}
+
 // Real-Time Backend API Synchronization
 async function syncWithBackendServer() {
     try {
@@ -138,12 +148,9 @@ async function syncWithBackendServer() {
         const statsRes = await fetch(API_BASE + '/api/v1/telemetry/stats');
         if (statsRes.ok) {
             const stats = await statsRes.json();
-            if (stats.promptsScanned !== undefined) {
-                document.getElementById("metric-scanned-count").textContent = stats.promptsScanned.toLocaleString();
-                document.getElementById("metric-blocked-count").textContent = stats.promptsBlocked;
-                document.getElementById("metric-redacted-count").textContent = stats.piiRedactions;
-                document.getElementById("metric-latency-val").textContent = stats.avgLatencyMs + "ms";
-            }
+            if (stats.promptsBlocked !== undefined) safeSetText("metric-blocked", stats.promptsBlocked);
+            if (stats.piiRedactions !== undefined) safeSetText("metric-redacted", stats.piiRedactions.toLocaleString());
+            if (stats.complianceRate !== undefined) safeSetText("metric-compliance", stats.complianceRate + "%");
         }
 
         // 2. SSE Telemetry Stream Listener
@@ -151,12 +158,9 @@ async function syncWithBackendServer() {
         sse.onmessage = function(event) {
             if (event.data) {
                 const s = JSON.parse(event.data);
-                if (s.promptsScanned !== undefined) {
-                    document.getElementById("metric-scanned-count").textContent = s.promptsScanned.toLocaleString();
-                    document.getElementById("metric-blocked-count").textContent = s.promptsBlocked;
-                    document.getElementById("metric-redacted-count").textContent = s.piiRedactions;
-                    document.getElementById("metric-latency-val").textContent = s.avgLatencyMs + "ms";
-                }
+                if (s.promptsBlocked !== undefined) safeSetText("metric-blocked", s.promptsBlocked);
+                if (s.piiRedactions !== undefined) safeSetText("metric-redacted", s.piiRedactions.toLocaleString());
+                if (s.complianceRate !== undefined) safeSetText("metric-compliance", s.complianceRate + "%");
             }
         };
 
@@ -1095,13 +1099,17 @@ function setupComplianceHub() {
     const btnVerify = document.getElementById("btn-verify-chain");
     const btnDownload = document.getElementById("btn-download-report");
     
-    btnVerify.addEventListener("click", () => {
-        runAuditChainVerification();
-    });
+    if (btnVerify) {
+        btnVerify.addEventListener("click", () => {
+            runAuditChainVerification();
+        });
+    }
     
-    btnDownload.addEventListener("click", () => {
-        downloadComplianceReportFile();
-    });
+    if (btnDownload) {
+        btnDownload.addEventListener("click", () => {
+            downloadComplianceReportFile();
+        });
+    }
 
     // Dynamic framework switcher listeners
     const tabs = document.querySelectorAll(".compliance-tab");
