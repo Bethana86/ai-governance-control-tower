@@ -117,32 +117,36 @@ const API_BASE = (window.location.protocol.startsWith('http')) ? '' : 'http://lo
 
 // Initializer
 function initApp() {
-    setupNavigation();
-    setupClock();
-    setupProductionStream();
-    setupSafetyPlayground();
-    setupPolicyEngine();
-    setupExplainability();
-    setupComplianceHub();
-    setupAgenticHub();
+    try { setupNavigation(); } catch(e) { console.error("Navigation setup error:", e); }
+    try { setupClock(); } catch(e) { console.error("Clock setup error:", e); }
+    try { setupProductionStream(); } catch(e) { console.error("Production stream setup error:", e); }
+    try { setupSafetyPlayground(); } catch(e) { console.error("Safety playground setup error:", e); }
+    try { setupPolicyEngine(); } catch(e) { console.error("Policy engine setup error:", e); }
+    try { setupExplainability(); } catch(e) { console.error("Explainability setup error:", e); }
+    try { setupComplianceHub(); } catch(e) { console.error("Compliance hub setup error:", e); }
+    try { setupAgenticHub(); } catch(e) { console.error("Agentic hub setup error:", e); }
     
     // Auto switch tab if URL query parameter ?tab=... is present
-    const urlParams = new URLSearchParams(window.location.search);
-    let tabParam = urlParams.get('tab');
-    if (tabParam) {
-        if (tabParam === 'rules') tabParam = 'policy';
-        if (tabParam === 'grounding') tabParam = 'security';
-        if (tabParam === 'audit') tabParam = 'explainability';
-        const targetBtn = document.querySelector(`.nav-btn[data-tab="${tabParam}"]`);
-        if (targetBtn) targetBtn.click();
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        let tabParam = urlParams.get('tab');
+        if (tabParam) {
+            if (tabParam === 'rules') tabParam = 'policy';
+            if (tabParam === 'grounding') tabParam = 'security';
+            if (tabParam === 'audit') tabParam = 'explainability';
+            const targetBtn = document.querySelector(`.nav-btn[data-tab="${tabParam}"]`);
+            if (targetBtn) targetBtn.click();
+        }
+    } catch(e) {
+        console.error("URL tab routing error:", e);
     }
 
     // Initial UI populate
-    renderPoliciesList();
-    addAuditLogEntry("System Diagnostics completed successfully. Governance policies deployed.");
+    try { renderPoliciesList(); } catch(e) { console.error("Policy rendering error:", e); }
+    try { addAuditLogEntry("System Diagnostics completed successfully. Governance policies deployed."); } catch(e) { console.error("Audit logging error:", e); }
 
     // Sync with Live FastAPI Backend Server
-    syncWithBackendServer();
+    try { syncWithBackendServer(); } catch(e) { console.error("FastAPI Backend sync error:", e); }
 }
 
 function safeSetText(id, text) {
