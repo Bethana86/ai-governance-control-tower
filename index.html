@@ -432,8 +432,8 @@
                     <div class="explainer-content" id="exp-tab-counterfactual">
                         <div class="explain-grid">
                             <div class="explain-card col-left">
-                                <h3 class="card-title">Patient Readmission Risk Predictor</h3>
-                                <p class="card-subtitle">Tweak clinical values to observe how the neural network changes prediction outcomes.</p>
+                                <h3 class="card-title" id="cf-title">Patient Readmission Risk Predictor</h3>
+                                <p class="card-subtitle" id="cf-subtitle">Tweak clinical values to observe how the neural network changes prediction outcomes.</p>
                                 
                                 <div class="sliders-container">
                                     <div class="slider-group">
@@ -475,7 +475,7 @@
                                     <div class="gauge-ring-outer"></div>
                                     <div class="gauge-content">
                                         <span class="gauge-value text-amber" id="cf-gauge-percent">65%</span>
-                                        <span class="gauge-label">Readmission Probability</span>
+                                        <span class="gauge-label" id="cf-gauge-label">Readmission Probability</span>
                                     </div>
                                 </div>
                                 <div class="cf-explanation-card mt-4">

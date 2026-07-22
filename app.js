@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const state = {
     activeTab: "dashboard",
     activeFramework: "hipaa",
+    activeAgenticDataset: "retail",
     riskScore: 18,
     blockedCount: 42,
     redactedCount: 1284,
@@ -613,7 +614,101 @@ function runPolicySandboxCheck(text) {
     }
 }
 
-// 6. Explainability Dashboard
+// 6. Explainability Dashboard & Dynamic Agentic Sync
+const DATASET_EXPLAIN_MAPPINGS = {
+    retail: {
+        title: "Retail Demand Forecast Explainer",
+        subtitle: "Tweak pricing, marketing, and shock parameters to simulate retail forecast variances.",
+        gaugeLabel: "Forecast Drift Probability",
+        labels: [
+            { id: "cf-age", name: "Simulated Demand Shock", min: 10, max: 50, step: 5, val: 15, suffix: "%" },
+            { id: "cf-vital", name: "Base Daily Demand", min: 5000, max: 20000, step: 500, val: 12000, suffix: " units" },
+            { id: "cf-hba1c", name: "Marketing Budget", min: 1, max: 10, step: 0.5, val: 4.5, suffix: "k USD" },
+            { id: "cf-admissions", name: "Active Promotions", min: 0, max: 5, step: 1, val: 2, suffix: " campaigns" }
+        ],
+        shapLabels: ['Simulated Shock', 'Base Daily Demand', 'Promotions Event', 'Seasonal Peak', 'Marketing Spend', 'Day of Week'],
+        shapData: [0.42, 0.31, 0.18, 0.12, 0.08, 0.02],
+        tokenText: "Transaction: Retail outlet region A base-demand 12000 units. Promotion campaign active, marketing budget 4.5k USD, shock +15%. Expected peak sales volume forecasted.",
+        tokenImpacts: {
+            "outlet": 0.0, "region": 0.01, "base-demand": 0.31, "12000": 0.05,
+            "units.": 0.0, "Promotion": 0.18, "campaign": 0.05, "active,": 0.02,
+            "marketing": 0.08, "budget": 0.05, "4.5k": 0.04, "USD,": 0.01,
+            "shock": 0.42, "+15%.": 0.12, "peak": 0.12, "sales": 0.05, "forecasted.": 0.03
+        }
+    },
+    it_ops: {
+        title: "IT CPU Load Risk Predictor",
+        subtitle: "Modify compute cluster loads and GC settings to calculate latency violation probabilities.",
+        gaugeLabel: "SLA Breach Probability",
+        labels: [
+            { id: "cf-age", name: "Simulated Load Shock", min: 10, max: 50, step: 5, val: 20, suffix: "%" },
+            { id: "cf-vital", name: "Active User Sessions", min: 100, max: 1000, step: 50, val: 500, suffix: " users" },
+            { id: "cf-hba1c", name: "Parallel Batch Jobs", min: 0, max: 10, step: 1, val: 3, suffix: " jobs" },
+            { id: "cf-admissions", name: "GC Cycles / Hour", min: 1, max: 5, step: 1, val: 2, suffix: " runs" }
+        ],
+        shapLabels: ['Simulated Shock', 'Active User Sessions', 'Parallel Batch Jobs', 'Memory Footprint', 'GC Thread Overhead', 'Cooling System'],
+        shapData: [0.48, 0.35, 0.22, 0.15, 0.11, 0.03],
+        tokenText: "Incident: IT datacenter west cpu load +20% shock. Parallel batch jobs 3 active. Active session users count 500, gc frequency 2. System latency profile evaluated.",
+        tokenImpacts: {
+            "datacenter": 0.02, "cpu": 0.15, "load": 0.10, "shock.": 0.08,
+            "Parallel": 0.22, "batch": 0.05, "jobs": 0.05, "3": 0.05,
+            "Active": 0.35, "session": 0.05, "users": 0.08, "500,": 0.12,
+            "gc": 0.11, "frequency": 0.02, "2.": 0.01, "latency": 0.05
+        }
+    },
+    energy: {
+        title: "Energy Grid Power Load Forecaster",
+        subtitle: "Tune ambient temperatures and capacity metrics to project grid stress levels.",
+        gaugeLabel: "Grid Outage Risk",
+        labels: [
+            { id: "cf-age", name: "Simulated Load Shock", min: 10, max: 50, step: 5, val: 25, suffix: "%" },
+            { id: "cf-vital", name: "Ambient Temperature", min: 10, max: 45, step: 1, val: 34, suffix: "°C" },
+            { id: "cf-hba1c", name: "EV Charging Demand", min: 50, max: 500, step: 10, val: 200, suffix: " stations" },
+            { id: "cf-admissions", name: "Solar Cap Yield", min: 0, max: 100, step: 5, val: 65, suffix: "%" }
+        ],
+        shapLabels: ['Ambient Temperature', 'Simulated Shock', 'EV Charging Stations', 'Industrial Base Load', 'Solar Capacitive Yield', 'Wind Ingress'],
+        shapData: [0.55, 0.39, 0.26, 0.18, -0.22, 0.04],
+        tokenText: "Status: Power grid sector south temperature 34°C, EV charging 200 active, solar capacity yield 65%. Simulated load shock +25% applied.",
+        tokenImpacts: {
+            "grid": 0.0, "temperature": 0.55, "34°C,": 0.18, "EV": 0.26,
+            "charging": 0.08, "200": 0.05, "solar": -0.22, "capacity": -0.10,
+            "yield": -0.05, "65%.": -0.02, "Simulated": 0.39, "shock": 0.08,
+            "+25%": 0.12, "applied.": 0.02
+        }
+    }
+};
+
+function syncExplainabilityConfig(dataset) {
+    const config = DATASET_EXPLAIN_MAPPINGS[dataset];
+    if (!config) return;
+    
+    // Update Title, Subtitle & Gauge label
+    safeSetText("cf-title", config.title);
+    safeSetText("cf-subtitle", config.subtitle);
+    safeSetText("cf-gauge-label", config.gaugeLabel);
+    
+    // Configure Sliders dynamically
+    config.labels.forEach((sliderConf) => {
+        const slider = document.getElementById(sliderConf.id);
+        const label = document.querySelector(`label[for="${sliderConf.id}"]`);
+        
+        if (slider) {
+            slider.min = sliderConf.min;
+            slider.max = sliderConf.max;
+            slider.step = sliderConf.step;
+            slider.value = sliderConf.val;
+        }
+        if (label) {
+            label.textContent = sliderConf.name;
+        }
+        
+        const valSpan = document.getElementById(`${sliderConf.id}-val`);
+        if (valSpan) {
+            valSpan.textContent = `${sliderConf.val}${sliderConf.suffix}`;
+        }
+    });
+}
+
 function setupExplainability() {
     const expAttributionBtn = document.getElementById("btn-exp-attribution");
     const expCounterfactualBtn = document.getElementById("btn-exp-counterfactual");
@@ -658,12 +753,15 @@ function setupExplainability() {
     const sliders = ["cf-age", "cf-vital", "cf-hba1c", "cf-admissions"];
     sliders.forEach(id => {
         document.getElementById(id).addEventListener("input", () => {
-            // Update labels
-            if (id === "cf-age") document.getElementById("cf-age-val").textContent = `${document.getElementById(id).value} yrs`;
-            if (id === "cf-vital") document.getElementById("cf-vital-val").textContent = `${document.getElementById(id).value} mmHg`;
-            if (id === "cf-hba1c") document.getElementById("cf-hba1c-val").textContent = `${document.getElementById(id).value} %`;
-            if (id === "cf-admissions") document.getElementById("cf-admissions-val").textContent = `${document.getElementById(id).value} times`;
-            
+            // Update labels dynamically based on current active dataset context
+            const dataset = state.activeAgenticDataset;
+            const config = DATASET_EXPLAIN_MAPPINGS[dataset];
+            if (config) {
+                const labelConf = config.labels.find(l => l.id === id);
+                if (labelConf) {
+                    document.getElementById(`${id}-val`).textContent = `${document.getElementById(id).value}${labelConf.suffix}`;
+                }
+            }
             calculateCounterfactualRisk();
         });
     });
@@ -677,6 +775,8 @@ function setupExplainability() {
         }
     });
     
+    // Sync default dataset state
+    syncExplainabilityConfig(state.activeAgenticDataset);
     // Render default attribution words
     renderTokenAttributions();
 }
@@ -737,18 +837,16 @@ function calculateGeminiSafetyStatus() {
 
 function renderTokenAttributions() {
     const container = document.getElementById("token-attribution-container");
+    if (!container) return;
     container.innerHTML = "";
     
-    const promptText = "Referral: Patient Jane Smith, age 72, admitted with elevated Systolic BP of 165 mmHg and high HbA1c of 9.1%. Prior clinical readmissions recorded.";
-    const words = promptText.split(" ");
+    const dataset = state.activeAgenticDataset;
+    const config = DATASET_EXPLAIN_MAPPINGS[dataset];
+    if (!config) return;
     
-    // Pre-calculate token values for premium SHAP highlighting
-    const tokenImpacts = {
-        "Jane": 0.0, "Smith,": 0.0, "age": 0.05, "72,": 0.12, 
-        "admitted": 0.02, "elevated": 0.18, "Systolic": 0.15, "BP": 0.05,
-        "165": 0.28, "mmHg": 0.0, "high": 0.16, "HbA1c": 0.22, "9.1%.": 0.35,
-        "Prior": 0.24, "clinical": 0.0, "readmissions": 0.38, "recorded.": 0.08
-    };
+    const promptText = config.tokenText;
+    const words = promptText.split(" ");
+    const tokenImpacts = config.tokenImpacts;
     
     words.forEach(word => {
         const cleanWord = word.replace(/[.,]/g, "");
@@ -761,6 +859,9 @@ function renderTokenAttributions() {
         if (impact > 0.2) {
             span.style.backgroundColor = `rgba(239, 68, 68, ${impact * 0.9})`;
             span.style.color = "#fff";
+        } else if (impact < 0) {
+            span.style.backgroundColor = `rgba(16, 185, 129, ${Math.abs(impact) * 0.8})`;
+            span.style.color = "#fff";
         } else if (impact > 0.05) {
             span.style.backgroundColor = `rgba(245, 158, 11, ${impact})`;
             span.style.color = "#fff";
@@ -768,10 +869,10 @@ function renderTokenAttributions() {
             span.style.backgroundColor = `rgba(255, 255, 255, 0.03)`;
         }
         
-        span.title = `SHAP Value: +${impact.toFixed(2)}`;
+        span.title = `SHAP Value: ${impact > 0 ? '+' : ''}${impact.toFixed(2)}`;
         
         span.addEventListener("click", () => {
-            alert(`SHAP Local Attribution:\nToken: "${word}"\nImpact Score: +${impact.toFixed(2)}\nRegulatory Category: Clinical Feature Importance`);
+            alert(`SHAP Local Attribution:\nToken: "${word}"\nImpact Score: ${impact > 0 ? '+' : ''}${impact.toFixed(2)}\nRegulatory Category: Forecast Feature Importance`);
         });
         
         container.appendChild(span);
@@ -779,7 +880,13 @@ function renderTokenAttributions() {
 }
 
 function renderSHAPChart() {
-    const ctx = document.getElementById("shap-attribution-chart").getContext("2d");
+    const chartEl = document.getElementById("shap-attribution-chart");
+    if (!chartEl) return;
+    const ctx = chartEl.getContext("2d");
+    
+    const dataset = state.activeAgenticDataset;
+    const config = DATASET_EXPLAIN_MAPPINGS[dataset];
+    if (!config) return;
     
     if (state.shapChart) {
         state.shapChart.destroy();
@@ -788,21 +895,22 @@ function renderSHAPChart() {
     state.shapChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['HbA1c > 9.0%', 'Prior Admissions', 'Systolic BP > 160', 'Patient Age > 70', 'Referral Keyword', 'Patient Name'],
+            labels: config.shapLabels,
             datasets: [{
                 label: 'SHAP Value (Risk Contribution)',
-                data: [0.35, 0.38, 0.28, 0.12, 0.08, 0.01],
-                backgroundColor: [
-                    'rgba(239, 68, 68, 0.75)',
-                    'rgba(239, 68, 68, 0.75)',
-                    'rgba(245, 158, 11, 0.75)',
-                    'rgba(245, 158, 11, 0.6)',
-                    'rgba(6, 182, 212, 0.5)',
-                    'rgba(16, 185, 129, 0.3)'
-                ],
-                borderColor: [
-                    '#ef4444', '#ef4444', '#f59e0b', '#f59e0b', '#06b6d4', '#10b981'
-                ],
+                data: config.shapData,
+                backgroundColor: config.shapData.map(val => {
+                    if (val < 0) return 'rgba(16, 185, 129, 0.75)';
+                    if (val > 0.4) return 'rgba(239, 68, 68, 0.75)';
+                    if (val > 0.2) return 'rgba(245, 158, 11, 0.75)';
+                    return 'rgba(6, 182, 212, 0.5)';
+                }),
+                borderColor: config.shapData.map(val => {
+                    if (val < 0) return '#10b981';
+                    if (val > 0.4) return '#ef4444';
+                    if (val > 0.2) return '#f59e0b';
+                    return '#06b6d4';
+                }),
                 borderWidth: 1.5
             }]
         },
@@ -838,69 +946,82 @@ function renderSHAPChart() {
 }
 
 function calculateCounterfactualRisk() {
-    const age = parseInt(document.getElementById("cf-age").value);
-    const bp = parseInt(document.getElementById("cf-vital").value);
-    const hba1c = parseFloat(document.getElementById("cf-hba1c").value);
-    const admissions = parseInt(document.getElementById("cf-admissions").value);
+    const dataset = state.activeAgenticDataset;
+    const val1 = parseFloat(document.getElementById("cf-age").value);
+    const val2 = parseFloat(document.getElementById("cf-vital").value);
+    const val3 = parseFloat(document.getElementById("cf-hba1c").value);
+    const val4 = parseFloat(document.getElementById("cf-admissions").value);
     
-    // Heuristic Score math
-    const base = 15;
-    const ageScore = (age - 30) * 0.3;
-    const bpScore = (bp - 100) * 0.45;
-    const hba1cScore = (hba1c - 5.5) * 6;
-    const admScore = admissions * 8;
+    let prob = 15;
+    let drivers = [];
+    let recommendations = [];
+    let text = "";
     
-    let prob = Math.round(base + ageScore + bpScore + hba1cScore + admScore);
+    if (dataset === "retail") {
+        prob = Math.round((val1 * 1.1) + ((val2 - 5000) / 15000) * 25 + (val3 * 1.5) + (val4 * 4));
+        if (val1 > 30) drivers.push(`high demand shock (+${val1}%)`);
+        if (val2 > 15000) drivers.push(`high base demand (${val2} units)`);
+        if (val3 > 7) drivers.push(`elevated marketing budget ($${val3}k)`);
+        
+        if (val1 > 20) recommendations.push("capping demand shock below 20%");
+        if (val3 > 5) recommendations.push("reducing marketing budget below $5k");
+        if (val4 > 2) recommendations.push("limiting concurrent promos");
+    } else if (dataset === "it_ops") {
+        prob = Math.round((val1 * 1.2) + ((val2 - 100) / 900) * 30 + (val3 * 3) + (val4 * 4));
+        if (val1 > 30) drivers.push(`intense traffic shock (+${val1}%)`);
+        if (val2 > 700) drivers.push(`heavy session users (${val2})`);
+        if (val3 > 5) drivers.push(`too many concurrent batch jobs (${val3})`);
+        
+        if (val1 > 20) recommendations.push("throttling load shock limits");
+        if (val2 > 600) recommendations.push("scaling user pods");
+        if (val3 > 4) recommendations.push("staggering batch runs");
+    } else if (dataset === "energy") {
+        prob = Math.round((val1 * 1.0) + (val2 * 1.3) + (val3 * 0.07) - (val4 * 0.2));
+        if (val1 > 30) drivers.push(`sudden load shock (+${val1}%)`);
+        if (val2 > 35) drivers.push(`ambient heat levels (${val2}°C)`);
+        if (val3 > 300) drivers.push(`EV charging grid congestion`);
+        if (val4 < 40) drivers.push(`low solar capacity reserve`);
+        
+        if (val2 > 30) recommendations.push("enforcing active grid load shedding");
+        if (val4 < 60) recommendations.push("boosting solar yield backup capacity");
+    }
+    
     prob = Math.max(5, Math.min(98, prob));
     
     // Render Gauge
     const gaugePercent = document.getElementById("cf-gauge-percent");
-    gaugePercent.textContent = `${prob}%`;
+    if (gaugePercent) gaugePercent.textContent = `${prob}%`;
     
-    // Set color based on risk
     const gaugeRing = document.querySelector(".gauge-ring-outer");
-    if (prob > 70) {
-        gaugePercent.className = "gauge-value text-red";
-        gaugeRing.style.borderTopColor = "var(--accent-red)";
-    } else if (prob > 40) {
-        gaugePercent.className = "gauge-value text-amber";
-        gaugeRing.style.borderTopColor = "var(--accent-amber)";
-    } else {
-        gaugePercent.className = "gauge-value text-green";
-        gaugeRing.style.borderTopColor = "var(--accent-green)";
+    if (gaugeRing) {
+        if (prob > 70) {
+            if (gaugePercent) gaugePercent.className = "gauge-value text-red";
+            gaugeRing.style.borderTopColor = "var(--accent-red)";
+        } else if (prob > 40) {
+            if (gaugePercent) gaugePercent.className = "gauge-value text-amber";
+            gaugeRing.style.borderTopColor = "var(--accent-amber)";
+        } else {
+            if (gaugePercent) gaugePercent.className = "gauge-value text-green";
+            gaugeRing.style.borderTopColor = "var(--accent-green)";
+        }
+        const rotateDeg = 45 + (prob * 1.8);
+        gaugeRing.style.transform = `rotate(${rotateDeg}deg)`;
     }
-    
-    // Rotate ring based on score
-    const rotateDeg = 45 + (prob * 1.8); // 45 to 225 deg
-    gaugeRing.style.transform = `rotate(${rotateDeg}deg)`;
     
     // Explanation Text
     const expText = document.getElementById("cf-text-explanation");
-    let drivers = [];
-    if (admissions > 2) drivers.push(`Prior Admissions (${admissions})`);
-    if (bp > 140) drivers.push(`elevated Blood Pressure (${bp} mmHg)`);
-    if (hba1c > 7.5) drivers.push(`high HbA1c (${hba1c}%)`);
-    if (age > 70) drivers.push(`elderly age bracket (${age} yrs)`);
-    
-    let text = "";
-    if (drivers.length > 0) {
-        const driversList = drivers.slice(0, 2).join(" and ");
-        text = `The predicted readmission risk probability is <strong>${prob}%</strong>, largely driven by your selection of <strong>${driversList}</strong>. `;
-        
-        // Suggest counterfactual target
-        let recommendations = [];
-        if (bp > 130) recommendations.push("Blood Pressure below 130 mmHg");
-        if (hba1c > 7.0) recommendations.push("HbA1c level below 7.0%");
-        if (admissions > 0) recommendations.push("close outpatient follow-up");
-        
-        if (recommendations.length > 0) {
-            text += `Simulated compliance targets: adjusting parameters to ${recommendations.slice(0, 2).join(" and ")} would mitigate readmission probability to <strong>${Math.max(12, prob - 30)}%</strong> (Low Risk).`;
+    if (expText) {
+        if (drivers.length > 0) {
+            const driversList = drivers.slice(0, 2).join(" and ");
+            text = `The predicted ${DATASET_EXPLAIN_MAPPINGS[dataset].gaugeLabel.toLowerCase()} is <strong>${prob}%</strong>, largely driven by your selection of <strong>${driversList}</strong>. `;
+            if (recommendations.length > 0) {
+                text += `Simulated compliance targets: adjusting parameters to ${recommendations.slice(0, 2).join(" and ")} would mitigate risk probability to <strong>${Math.max(12, prob - 30)}%</strong>.`;
+            }
+        } else {
+            text = `The predicted forecasting drift is highly secure (<strong>${prob}%</strong>). Model parameters sit within compliant regulatory-safe thresholds.`;
         }
-    } else {
-        text = `The predicted readmission risk is highly secure (<strong>${prob}%</strong>). Patient parameters sit within the compliant regulatory-safe thresholds.`;
+        expText.innerHTML = text;
     }
-    
-    expText.innerHTML = text;
 }
 
 // 7. Compliance Hub & Audit Logging
@@ -1269,6 +1390,13 @@ function setupAgenticHub() {
     sliderShock.addEventListener("input", () => {
         valShock.textContent = `+${sliderShock.value}%`;
     });
+
+    if (datasetSelect) {
+        datasetSelect.addEventListener("change", (e) => {
+            state.activeAgenticDataset = e.target.value;
+            syncExplainabilityConfig(state.activeAgenticDataset);
+        });
+    }
 
     // Simulated background broker log generator
     const interagentMessages = [
