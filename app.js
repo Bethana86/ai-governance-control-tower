@@ -1082,27 +1082,32 @@ function renderComplianceChecklist(framework) {
     });
 }
 
-async function addAuditLogEntry(event) {
-    const timestamp = new Date().toLocaleString('en-US', { hour12: false });
-    const prevEntry = state.auditLogs[state.auditLogs.length - 1];
-    
-    // Compute cryptographic SHA-256 connecting blocks
-    const linkStr = prevEntry.hash + timestamp + event;
-    const newHash = await computeSHA256(linkStr);
-    
-    state.auditLogs.push({
-        timestamp: timestamp,
-        event: event,
-        hash: newHash,
-        prevHash: prevEntry.hash
+let auditQueue = Promise.resolve();
+
+function addAuditLogEntry(event) {
+    auditQueue = auditQueue.then(async () => {
+        const timestamp = new Date().toLocaleString('en-US', { hour12: false });
+        const prevEntry = state.auditLogs[state.auditLogs.length - 1];
+        
+        // Compute cryptographic SHA-256 connecting blocks
+        const linkStr = prevEntry.hash + timestamp + event;
+        const newHash = await computeSHA256(linkStr);
+        
+        state.auditLogs.push({
+            timestamp: timestamp,
+            event: event,
+            hash: newHash,
+            prevHash: prevEntry.hash
+        });
+        
+        // Update compliance center terminal UI if open
+        const terminal = document.getElementById("audit-log-terminal");
+        if (terminal) {
+            terminal.innerHTML += `\n[RECORD] ${timestamp} - ${event}\n[BLOCK HASH] ${newHash}\n[CHAIN STATUS] Link Verified.`;
+            terminal.scrollTop = terminal.scrollHeight;
+        }
     });
-    
-    // Update compliance center terminal UI if open
-    const terminal = document.getElementById("audit-log-terminal");
-    if (terminal) {
-        terminal.innerHTML += `\n[RECORD] ${timestamp} - ${event}\n[BLOCK HASH] ${newHash}\n[CHAIN STATUS] Link Verified.`;
-        terminal.scrollTop = terminal.scrollHeight;
-    }
+    return auditQueue;
 }
 
 async function runAuditChainVerification() {
@@ -1129,6 +1134,10 @@ async function runAuditChainVerification() {
         const checkStr = prev.hash + current.timestamp + current.event;
         const calcHash = await computeSHA256(checkStr);
         if (calcHash !== current.hash) {
+            console.log("TAMPER DETECTED AT BLOCK " + i);
+            console.log("  checkStr: " + checkStr);
+            console.log("  calcHash: " + calcHash);
+            console.log("  current.hash: " + current.hash);
             chainValid = false;
             break;
         }
