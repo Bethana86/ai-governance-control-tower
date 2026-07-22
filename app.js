@@ -222,19 +222,15 @@ function setupClock() {
     updateTime();
 }
 
-// // 3. Real-Time Production Ingress Stream Engine
+// 3. Real-Time Production Ingress Stream Engine
 function setupProductionStream() {
     addAuditLogEntry("Production Ingress Telemetry Stream initialized under GCP Project beth-e38b7. Zero-Trust Monitoring Active.");
-}
-    
-    // Log in Compliance chain
-    addAuditLogEntry(`Stream evaluation: [${verdict}] Matched Policy: [${matchedPolicy}] - Payload: "${prompt.substring(0, 45)}..."`);
 }
 
 function appendStreamLog(prompt, verdict, policy, delay) {
     const container = document.getElementById("stream-container");
+    if (!container) return;
     const timeStr = new Date().toLocaleTimeString('en-US', { hour12: false });
-    const mockHash = Array.from({length: 8}, () => Math.floor(Math.random()*16).toString(16)).join('');
     
     // Mask text if verdict is masked
     let displayText = prompt;
@@ -242,16 +238,19 @@ function appendStreamLog(prompt, verdict, policy, delay) {
         displayText = maskPIIText(prompt);
     }
     
-        const modelNames = ["gemini-1.5-pro", "gemini-1.5-flash"];
-        const selectedModel = modelNames[Math.floor(Math.random() * modelNames.length)];
-        let groundingInfo = "Grounding: N/A";
-        if (verdict === "PASS") {
-            groundingInfo = `Grounding: ${Math.floor(Math.random() * 5) + 95}%`;
-        } else if (verdict === "MASKED") {
-            groundingInfo = `Grounding: ${Math.floor(Math.random() * 10) + 90}%`;
-        }
-        
-        item.innerHTML = `
+    const item = document.createElement("div");
+    item.className = "stream-item";
+    
+    const modelNames = ["gemini-1.5-pro", "gemini-1.5-flash"];
+    const selectedModel = modelNames[Math.floor(Math.random() * modelNames.length)];
+    let groundingInfo = "Grounding: N/A";
+    if (verdict === "PASS" || verdict === "SECURE") {
+        groundingInfo = `Grounding: ${Math.floor(Math.random() * 5) + 95}%`;
+    } else if (verdict === "MASKED") {
+        groundingInfo = `Grounding: ${Math.floor(Math.random() * 10) + 90}%`;
+    }
+    
+    item.innerHTML = `
         <div class="stream-meta">
             <span class="stream-time">${timeStr}</span>
             <span class="stream-verdict-badge ${verdict}">${verdict}</span>
